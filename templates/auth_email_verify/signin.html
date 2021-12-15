@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Saas web app</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/puse-icons-feather/feather.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+    <!-- endinject -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}">
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-around mt-5">
+            <div class="col-sm-6 border bg-white rounded shadow-lg">
+                <h2 class="mb-1 text-success text-center">Log In</h2>
+                <hr>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <form action='' method='POST'>
+                    {% csrf_token %}
+                    {% for fm in form %}
+                        {{ fm.label_tag }}
+                        {{ fm }}
+                        {% for error in fm.errors %}
+                            <p style="color: red">{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    <input type="submit" value="Sign In" class="btn btn-primary my-3">
+                    <span>Not a member ? <a href="{%  url 'signup' %}">Create new account</a> </span>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

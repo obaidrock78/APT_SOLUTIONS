@@ -1,0 +1,30 @@
+{% load static %}
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <ul class="nav">
+        <li class="nav-item active"><a class="nav-link" href="{% url 'customers:home' %}"> <img class="menu-icon"
+                    src="{% static 'images/menu_icons/01.png' %}" alt="menu icon"> <span
+                    class="menu-title">Dashboard</span></a></li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#page-layouts" aria-expanded="false"
+                aria-controls="page-layouts"> <img class="menu-icon" src="{% static 'images/menu_icons/02.png' %}"
+                    alt="menu icon"> <span class="menu-title">Clients</span><i class="menu-arrow"></i></a>
+            <div class="collapse" id="page-layouts">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'customers:clients_list' %}">Clients List</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#apps-dropdown" aria-expanded="false"
+                aria-controls="apps-dropdown"> <img class="menu-icon" src="{% static 'images/menu_icons/09.png' %}"
+                    alt="menu icon"> <span class="menu-title">Suppliers</span><i class="menu-arrow"></i></a>
+            <div class="collapse" id="apps-dropdown">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'customers:suppliers_list' %}">Suppliers
+                            List</a></li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</nav>

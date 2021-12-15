@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Saas web app</title>
+
+    <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/puse-icons-feather/feather.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+    
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}">
+</head>
+<body class="bg-light">
+    <div class="container mb-4">
+        <!-- <div class="row justify-content-around mt-5">
+            <div class="col-sm-6">
+                <h4>Sign Up</h4>
+            </div>
+        </div> -->
+        <div class="row justify-content-around mt-2">
+            <div class="col-sm-6 border bg-white rounded shadow-lg">
+                <h2 class="mb-1 text-success text-center">Sign Up</h2>
+                <hr class="bg-light">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <form action='' method='POST'>
+                    {% csrf_token %}
+                    {% for fm in form %}
+                        {{ fm.label_tag }}
+                        {{ fm }}
+                        {% if fm.help_text %}
+                            <small style="color: grey">{{ fm.help_text }}</small>
+                        {% endif %}
+                        {% for error in fm.errors %}
+                            <p style="color: red">{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    <br>
+                    <input type="submit" value="Sign Up" class="btn btn-primary my-2">
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp; Already have and account ? <a href="{%  url 'signin' %}">Login</a></span>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

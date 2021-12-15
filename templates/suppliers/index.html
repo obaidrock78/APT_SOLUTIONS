@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">List of Suppliers</h4>
+            <div class="row">
+                <div class="col-12">
+                    <div id="order-listing_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <a href="/suppliers/new" class="btn btn-outline-primary">Add Suppliers</a>
+                            </div>
+                            <div class="col-sm-12 col-md-6">
+                                <div id="order-listing_filter" class="dataTables_filter float-right"><label><input
+                                        type="search"
+                                        class="form-control"
+                                        placeholder="Search"
+                                        aria-controls="order-listing"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="order-listing" class="table dataTable no-footer" role="grid"
+                                       aria-describedby="order-listing_info">
+                                    <thead>
+                                    <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Order #: activate to sort column ascending"
+                                            style="width: 82.1px;">Name
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Purchased On: activate to sort column ascending"
+                                            style="width: 140.988px;">Category
+                                        </th>
+                                        <th class="sorting_asc" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Customer: activate to sort column descending"
+                                            aria-sort="ascending" style="width: 102.387px;">Balance
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Ship to: activate to sort column ascending"
+                                            style="width: 79.0125px;">Contact
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Base Price: activate to sort column ascending"
+                                            style="width: 110.562px;">Telephone
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Purchased Price: activate to sort column ascending"
+                                            style="width: 160.3px;">Mobile Number
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Status: activate to sort column ascending"
+                                            style="width: 78.3125px;">Active
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Actions: activate to sort column ascending"
+                                            style="width: 84.1375px;">Actions
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                     {% for customer in suppliers %}
+                                        <tr role="row" class="odd">
+                                            <td class="">{{ customer.supplier_name }}</td>
+                                            <td class="">{{ customer.category }}</td>
+                                            <td class="sorting_1">{{ customer.opening_balance }}</td>
+                                            <td>{{ customer.contact_details_name }}</td>
+                                            <td>{{ customer.contact_details_telephone }}</td>
+                                            <td>{{ customer.contact_details_mobile }}</td>
+                                            <td>
+                                                {% if customer.is_active %}
+                                                    Active
+                                                {% else %}
+                                                    Inactive
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-outline-primary">Action</button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

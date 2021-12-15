@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Saas web app</title>
+
+    <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/puse-icons-feather/feather.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}">
+
+    {% block ExtraCss %}
+    {% endblock ExtraCss %}
+</head>
+
+<body class="sidebar-icon-only">
+<div class="container-scroller">
+    {% include 'partials/topbar.html' %}
+    <div class="container-fluid page-body-wrapper">
+
+        {% include 'partials/sidebar.html' %}
+        <div class="main-panel">
+            <div class="content-wrapper">
+                {% block content %} {% endblock content %}
+            </div>
+
+            <footer class="footer">
+                <div class="container-fluid clearfix">
+                                <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2018 <a
+                                        href="http://www.bootstrapdash.com/" target="_blank">Bootstrapdash</a>. All rights reserved.</span>
+                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted &amp; made with <i
+                            class="mdi mdi-heart text-danger"></i></span>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'vendors/js/vendor.bundle.base.js'%}"></script>
+
+<script src="{% static 'app/main.js' %}"></script>
+
+{% block ExtraJs %}
+{% endblock ExtraJs %}
+</body>
+</html>

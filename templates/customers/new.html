@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h3>New Customer</h3>
+    <form method="POST" class="mt-4" action="/customers/new">
+    {% csrf_token %}
+        <input type="hidden" name="company" value="{{ company }}">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Customer Name</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="customer_name" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Active</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="checkbox" name="is_active">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row mt-2">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Category</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <select name="category" class="form-control">
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Credit Limit</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="credit_limit" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Cash Sales Customer</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="checkbox" name="cash_sale_customer">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Customer VAT Number</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="customer_vat_number" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Opening Balance</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="opening_balance" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Sales Rep</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <select name="sales_rep" class="form-control">
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Opening Balance at</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="date" name="opening_balance_as_at" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Accept Electronics Invoices</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="checkbox" name="accept_electronic_invoices">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-2">
+            <div class="card-body">
+                <h4>Detail</h4>
+
+                <div class="row mt-3">
+                    <div class="col-md-6 col-sm-6">
+                        <h5>Postal Address</h5>
+                        <div class="row mt-2 form-group">
+                            <div class="col-md-12 col-sm-12">
+                                <input type="text" name="postal_address_line_one" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <h5>Contact Details</h5>
+                        <div class="row mt-2 form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Contact Name</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="contact_details_name" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-12 col-sm-12">
+                                <input type="text" name="postal_address_line_two" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Email</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="contact_details_email" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row mt-3">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-12 col-sm-12">
+                                <input type="text" name="postal_address_line_three" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Telephone</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="contact_details_telephone" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-12 col-sm-12">
+                                <input type="text" name="postal_address_line_four" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Mobile</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="contact_details_mobile" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                Postal Code
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="postal_address_postal_code" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Fax</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="contact_details_fax" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+
+                <div class="row mt-3">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-12 col-sm-12">
+                                <h5>Delivery Address</h5>
+                                <input type="text" name="delivery_address_line_one" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <h5>Default Settings</h5>
+                                <label>Statement Distribution</label>
+                            </div>
+                            <div class="col-md-8  col-sm-8">
+                                <input type="text" name="contact_details_mobile" class="form-control mt-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row mt-3">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-12 col-sm-12">
+                                <input type="text" name="delivery_address_line_two" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Default Discount</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="default_settings_discount" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row mt-3">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-12 col-sm-12">
+                                <input type="text" name="delivery_address_line_three" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Default VAT Type</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="default_settings_vat" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                       <div class="row mt-3">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                             <div class="col-md-4 col-sm-4">
+                                 Postal Code
+                             </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="text" name="delivery_address_postal_code" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label>Due Date for Payment</label>
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <input type="date" name="default_settings_due_date_for_payments" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <hr/>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-primary" value="Save">
+                </div>
+            </div>
+        </div>
+
+
+    </form>
+
+{% endblock content %}
