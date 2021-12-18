@@ -12,4 +12,6 @@ __pycache__/
 .venv/
 venv/
 
+/static-comp/
+
 .user.gitignore
