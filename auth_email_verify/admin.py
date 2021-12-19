@@ -1,5 +1,7 @@
 from django.contrib import admin
-from . models import Profile, AuthRole, RolePermission
+from django.contrib.auth.admin import UserAdmin
+from . models import Profile, AuthRole, RolePermission, User
+
 
 # Register your models here.
 
@@ -13,3 +15,4 @@ class RolePermissionAdmin(admin.ModelAdmin):
     list_filter = ['role']
 
 admin.site.register(AuthRole)
+admin.site.register(User, UserAdmin)

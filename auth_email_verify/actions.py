@@ -1,4 +1,4 @@
-from . models import User, Profile
+from .models import User, Profile
 import uuid
 
 def create_user(full_name, username, password, verified = True, is_superuser=False):

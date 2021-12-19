@@ -48,7 +48,15 @@ class RolePermission(BaseModel['RolePermission']):
 
 
 class User(AbstractUser):
-    pass
+    role_id: Optional[int]
+    role = models.ForeignKey(
+        AuthRole,
+        db_column='role_id',
+        related_name='assigned_users',
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True
+    )
 
 class Profile(BaseModel['Profile']):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
