@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'saas_web_app',
     'auth_email_verify',
     'customers.apps.CustomersConfig',
 ]
@@ -146,6 +147,8 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
 
+
+AUTH_USER_MODEL = 'auth_email_verify.User'
 
 # ---------------------------------------------------------------------------- #
 

@@ -1,15 +1,11 @@
+from typing import Optional
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from auth_email_verify.app_permissions import AppPermission
 
 from saas_web_app.persistance import BaseModel
 
 # Create your models here.
-
-class Profile(BaseModel['Profile']):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    token = models.CharField(max_length=150)
-    verify = models.BooleanField(default=False)
 
 class AuthRole(BaseModel['AuthRole']):
     name = models.CharField(max_length=150)
@@ -47,6 +43,14 @@ class RolePermission(BaseModel['RolePermission']):
     )
     perm_slug = models.CharField(max_length=100)
 
-
     def __str__(self):
         return self.perm_slug
+
+
+class User(AbstractUser):
+    pass
+
+class Profile(BaseModel['Profile']):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=150)
+    verify = models.BooleanField(default=False)
