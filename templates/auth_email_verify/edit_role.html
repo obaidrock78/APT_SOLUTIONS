@@ -8,10 +8,12 @@
     --switch-ball-radius: 20px;
     --switch-ball-h-margin: 4px;
 
+    --switch-line-active-bg: #bada55;
     --switch-line-width: 58px;
     --switch-line-height: 28px;
 
     --switch-toggle-animation-duration: 0.15s;
+    --switch-ball-animation-scale: 1.9;
   }
 
   input.switch-input[type=checkbox] {
@@ -59,7 +61,7 @@
   }
 
   input.switch-input[type=checkbox]:checked + label.switch-label {
-    background: #bada55;
+    background: var(--switch-line-active-bg);
     /*background: #1d28fa;*/
   }
 
@@ -69,7 +71,8 @@
   }
 
   label.switch-label:active:after {
-    width: calc(var(--switch-line-width) - var(--switch-ball-h-margin) * 2 - 2px);
+    /*width: calc(var(--switch-line-width) - var(--switch-ball-h-margin) * 2 - 2px);*/
+    width: calc(var(--switch-ball-radius) * var(--switch-ball-animation-scale));
   }
 </style>
 
