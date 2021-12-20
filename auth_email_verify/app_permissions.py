@@ -9,7 +9,7 @@ class AppPermission:
 
 @dataclasses.dataclass(frozen=True)
 class PermCategory: 
-    name: str 
+    name: str
     perms: list[AppPermission]
 
 
@@ -250,6 +250,9 @@ __categorized_permissions = [
 ]
 
 __all_permissions = list(reduce(lambda a, b: a + b, map(lambda catd_perm: catd_perm.perms, __categorized_permissions), []))
+
+def categorized_permissions():
+    return __categorized_permissions
 
 def all_permissions():
     return __all_permissions

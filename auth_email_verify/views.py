@@ -13,6 +13,7 @@ from .actions import user_allow_admin
 from .forms import SignUpForm, SignInForm
 from .models import AuthRole, Profile
 
+from .app_permissions import categorized_permissions
 
 def send_email_after_registration(email, token):
     subject = 'Verify Email'
@@ -127,5 +128,6 @@ def edit_role(request, role_id):
 
     return render(request, 'auth_email_verify/edit_role.html', context={
         'role': role,
-        'can_change': can_change    
+        'can_change': can_change,
+        'perm_cats': categorized_permissions()
     })

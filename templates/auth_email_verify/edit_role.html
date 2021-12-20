@@ -5,15 +5,23 @@
   :root {
     --widget-border-color: #dddedf;
 
-    --switch-ball-radius: 20px;
-    --switch-ball-h-margin: 4px;
+    /* sw-bl = "switch ball" */
+    /* sw-ln = "switch line" */
 
-    --switch-line-active-bg: #bada55;
-    --switch-line-width: 58px;
-    --switch-line-height: 28px;
+    --sw-ln-on-bg: #fa1d84;
+    --sw-ln-disabled-on-bg: #f5bada;
 
-    --switch-toggle-animation-duration: 0.15s;
-    --switch-ball-animation-scale: 1.9;
+    --sw-ln-off-bg: #afafaf;
+    --sw-ln-disabled-off-bg: #dfdfdf;
+
+    --sw-bl-radius: 18px;
+    --sw-bl-h-margin: 5px;
+
+    --sw-ln-width: 50px;
+    --sw-ln-height: 28px;
+
+    --sw-toggle-animation-duration: 0.15s;
+    --sw-bl-animation-scale: 1;
   }
 
   input.switch-input[type=checkbox] {
@@ -23,8 +31,8 @@
   }
 
   .switch-container {
-    max-height: var(--switch-line-height);
-    height: var(--switch-line-height);
+    max-height: var(--sw-ln-height);
+    height: var(--sw-ln-height);
     display: flex;
     align-items: center;
   }
@@ -32,47 +40,57 @@
   label.switch-label {
     cursor: pointer;
     text-indent: -9999px;
-    background: grey;
+    background: var(--sw-ln-off-bg);
     display: block;
     position: relative;
     margin: 0;
     padding: 0;
 
     height: 100%;
-    width: var(--switch-line-width);
+    width: var(--sw-ln-width);
 
     top: 2px;
 
-    border-radius: var(--switch-line-height);
+    border-radius: var(--sw-ln-height);
   }
 
   label.switch-label:after {
     content: '';
     position: absolute;
-    transition: var(--switch-toggle-animation-duration) all;
+    transition: var(--sw-toggle-animation-duration) all;
     background: #fff;
-    left: var(--switch-ball-h-margin);
+    left: var(--sw-bl-h-margin);
 
-    width: var(--switch-ball-radius);
-    height: var(--switch-ball-radius);
-    top: calc((var(--switch-line-height) - var(--switch-ball-radius)) / 2);
-    border-radius: var(--switch-ball-radius);
+    width: var(--sw-bl-radius);
+    height: var(--sw-bl-radius);
+    top: calc((var(--sw-ln-height) - var(--sw-bl-radius)) / 2);
+    border-radius: var(--sw-bl-radius);
     border: 1px solid var(--widget-border-color);
   }
 
-  input.switch-input[type=checkbox]:checked + label.switch-label {
-    background: var(--switch-line-active-bg);
-    /*background: #1d28fa;*/
+  input.switch-input[type=checkbox]:disabled + label.switch-label {
+    cursor: not-allowed;
   }
 
+  input.switch-input[type=checkbox]:checked + label.switch-label {
+    background: var(--sw-ln-on-bg);
+  }
+
+  input.switch-input[type=checkbox]:disabled:checked + label.switch-label {
+    background: var(--sw-ln-disabled-on-bg);
+  }
+  input.switch-input[type=checkbox]:disabled:not(:checked) + label.switch-label {
+    background: var(--sw-ln-disabled-off-bg);
+  }
+
+
   input.switch-input[type=checkbox]:checked + label.switch-label:after {
-    left: calc(100% - var(--switch-ball-h-margin));
+    left: calc(100% - var(--sw-bl-h-margin));
     transform: translateX(-100%);
   }
 
   label.switch-label:active:after {
-    /*width: calc(var(--switch-line-width) - var(--switch-ball-h-margin) * 2 - 2px);*/
-    width: calc(var(--switch-ball-radius) * var(--switch-ball-animation-scale));
+    width: calc(var(--sw-bl-radius) * var(--sw-bl-animation-scale));
   }
 </style>
 
@@ -90,12 +108,17 @@
     margin-bottom: 1.6rem;
   }
 
-  .role-category-section > .category-title {
+  .role-category-section > .category-header {
     padding: 16px 24px; 
     border-bottom: 1px solid var(--widget-border-color);
 
     display: flex;
     align-items: center;
+  }
+
+  .category-header .category-title {
+    margin-left: 24px;
+    font-size: 19px;
   }
 
   .permission-list {
@@ -114,15 +137,21 @@
     border-top: none;
   }
 
-  .permission-label {
-    font-weight: 600;
+  .permission-info {
+    margin-left: 24px;
+  }
+
+  .permission-info .permission-label {
+    font-weight: 700;
     font-size: 13px;
     margin: 0 !important;
   }
 
-  .permission .description {
+  .permission-info .description {
     margin-bottom: 0 0 2px;
-    color:  #52555a;
+    font-weight: 400;
+    font-size: 13px;
+    color: #52555a;
     font-size: 13px;
   }
 
@@ -137,29 +166,32 @@
       <h3 class="card-title mb-0">{{role.name}} Role</h3>
       <button type="button" class="btn btn-info ml-auto">Done</button>
     </div>
-    
+
+    {% for category in perm_cats %}
     <div class="role-category-section">
-      <div class="category-title">
+      <div class="category-header">
         <div class="switch-container">
-          <input class="switch-input" type="checkbox" id="switch" />
-          <label class="switch-label" for="switch">Toggle</label>
+          <input class="switch-input" type="checkbox" id="cat-sw--{{forloop.counter}}" />
+          <label class="switch-label" for="cat-sw--{{forloop.counter}}">Toggle</label>
         </div>
-        <h4 style="margin-left: 24px;">Files</h4>
+        <h4 class='category-title'>{{ category.name }}</h4>
       </div>
-
-      <div>
-        <ul class="permission-list">
-          <li class="permission">
-            <div>
-              <label class="permission-label">Admin Tab</label>
-              <div class="description">View the admin tab, including information on client referrals, contact growth, and workload.</div>
-            </div>
-          </li>
-        </ul>
-      </div>
-
+      <ul class="permission-list">
+        {% for perm in category.perms %}
+        <li class="permission">
+          <div class="switch-container">
+            <input class="switch-input" type="checkbox" id="perm-sw--{{perm.slug}}" />
+            <label class="switch-label" for="perm-sw--{{perm.slug}}">Toggle</label>
+          </div>
+          <div class="permission-info">
+            <label class="permission-label">{{perm.title}}</label>
+            <div class="description">{{perm.desc}}</div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
     </div>
-
+    {% endfor %}
   </div>
 </div>  
 {% endblock content %}
