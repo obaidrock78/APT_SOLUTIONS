@@ -8,5 +8,5 @@ urlpatterns = [
     path('signin/', SignInView.as_view(), name='signin'),
     path('logout/', views.logout_view, name='logout'),
 
-    path('permissions/manage', views.manage_permissions, name='manage_permissions'),
+    path('roles/manage', views.manage_roles, name='manage_roles'),
 ]

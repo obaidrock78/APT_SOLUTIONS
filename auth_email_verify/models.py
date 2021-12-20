@@ -10,21 +10,21 @@ from saas_web_app.persistance import BaseModel
 class AuthRole(BaseModel['AuthRole']):
 
     class RlType:
-        DEFAULT = 'default'
-        BASIC = 'basic'
+        BASIC = 'basic' # = built-in
         USER_DEFINED = 'user-defined'
         
     name = models.CharField(max_length=150)
-    permission_objs: models.Manager['RolePermission']
-
+    label = models.CharField(max_length=150, default='other')
+    is_default = models.BooleanField(default=False)
     rltype = models.CharField(
         max_length=20, 
         choices=(
-            (RlType.DEFAULT,        "Default"),
             (RlType.BASIC,          "Basic"),
             (RlType.USER_DEFINED,   "User Defined"),
         )
     )
+
+    permission_objs: models.Manager['RolePermission']
 
     def flat_permissions_list(self):
         return list(self.permission_objs.values_list('perm_slug', flat=True).all())

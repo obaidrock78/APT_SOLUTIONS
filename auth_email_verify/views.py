@@ -11,7 +11,7 @@ from django.http.response import HttpResponse
 
 from .actions import user_allow_admin
 from .forms import SignUpForm, SignInForm
-from .models import Profile
+from .models import AuthRole, Profile
 
 
 def send_email_after_registration(email, token):
@@ -98,7 +98,22 @@ def logout_view(request):
     request.session.flush()
     return redirect("signin")
 
+def make_role_info(role: AuthRole):
+
+    can_delete = not (
+        role.label in ('admin_regular', 'admin_no_bill') 
+        or role.is_default
+    )
+
+    return {
+        'role': role,
+        'can_delete': can_delete
+    }
 
 @user_passes_test(user_allow_admin)
-def manage_permissions(request):
-    return HttpResponse('Test Response')
+def manage_roles(request):
+    roles_infos = [make_role_info(role) for role in AuthRole.objects.all()]
+
+    return render(request, 'auth_email_verify/list_roles.html', context={
+        'all_roles_infos': roles_infos
+    })
