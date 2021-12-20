@@ -1,18 +1,18 @@
-from django.contrib.auth import forms
-from django.shortcuts import redirect, render
-from django.views import View
-from . forms import SignUpForm, SignInForm
-from . models import Profile, User
 import uuid  # To generate Token
-
-from django.core.mail import send_mail
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from django.conf import settings
 
-from django.contrib import messages
+from django.views import View
+from django.shortcuts import redirect, render
+from django.core.mail import send_mail
+from django.http.response import HttpResponse
 
-from django.contrib.auth import authenticate, login, logout
+from .actions import user_allow_admin
+from .forms import SignUpForm, SignInForm
+from .models import Profile
 
-# Create your views here.
 
 def send_email_after_registration(email, token):
     subject = 'Verify Email'
@@ -90,10 +90,15 @@ class SignInView(View):
                 return redirect('signin')
 
         messages.error(request, 'Invalid username or password')
-        return render(request, 'auth_email_verify/signin.html', {'form': form})
+        return render(request, 'auth_email_verify/signin.html', { 'form': form })
 
 
 def logout_view(request):
     logout(request)
     request.session.flush()
     return redirect("signin")
+
+
+@user_passes_test(user_allow_admin)
+def manage_permissions(request):
+    return HttpResponse('Test Response')

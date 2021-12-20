@@ -7,4 +7,6 @@ urlpatterns = [
     path('account_verify/<slug:token>', views.account_verify, name='account_verify'),
     path('signin/', SignInView.as_view(), name='signin'),
     path('logout/', views.logout_view, name='logout'),
+
+    path('permissions/manage', views.manage_permissions, name='manage_permissions'),
 ]

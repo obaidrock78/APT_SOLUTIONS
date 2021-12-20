@@ -1,5 +1,8 @@
-from .models import User, Profile
 import uuid
+from .models import User, Profile
+
+def user_allow_admin(user):
+    return user.is_superuser
 
 def create_user(full_name, username, password, verified = True, is_superuser=False):
     if is_superuser:

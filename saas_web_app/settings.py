@@ -149,6 +149,7 @@ MESSAGE_TAGS = {
 
 
 AUTH_USER_MODEL = 'auth_email_verify.User'
+LOGIN_URL = 'signin'
 
 # ---------------------------------------------------------------------------- #
 

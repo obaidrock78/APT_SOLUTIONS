@@ -8,24 +8,39 @@ from saas_web_app.persistance import BaseModel
 # Create your models here.
 
 class AuthRole(BaseModel['AuthRole']):
+
+    class RlType:
+        DEFAULT = 'default'
+        BASIC = 'basic'
+        USER_DEFINED = 'user-defined'
+        
     name = models.CharField(max_length=150)
     permission_objs: models.Manager['RolePermission']
+
+    rltype = models.CharField(
+        max_length=20, 
+        choices=(
+            (RlType.DEFAULT,        "Default"),
+            (RlType.BASIC,          "Basic"),
+            (RlType.USER_DEFINED,   "User Defined"),
+        )
+    )
 
     def flat_permissions_list(self):
         return list(self.permission_objs.values_list('perm_slug', flat=True).all())
 
     def give_permission(self, permission: AppPermission):
         if not permission.slug in self.flat_permissions_list():
-            # rperm = RolePermission()
             RolePermission.objects.create(
-                role = self,
-                perm_slug = permission.slug
+                role=self,
+                perm_slug=permission.slug
             )
-            # rperm.save()
-
 
     def remove_permission(self, permission: AppPermission):
         RolePermission.objects.filter(role=self, perm_slug=permission.slug).delete()
+
+    def has_permission(self, perm_slug: str):
+        return perm_slug in self.flat_permissions_list()
 
     def __str__(self):
         return self.name
