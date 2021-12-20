@@ -3,11 +3,11 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.conf import settings
+from django.http.response import HttpResponse
 
 from django.views import View
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.core.mail import send_mail
-from django.http.response import HttpResponse
 
 from .actions import user_allow_admin
 from .forms import SignUpForm, SignInForm
@@ -102,7 +102,6 @@ def make_role_info(role: AuthRole):
 
     can_delete = not (
         role.label in ('admin_regular', 'admin_no_bill') 
-        or role.is_default
     )
 
     return {
@@ -116,4 +115,17 @@ def manage_roles(request):
 
     return render(request, 'auth_email_verify/list_roles.html', context={
         'all_roles_infos': roles_infos
+    })
+
+@user_passes_test(user_allow_admin)
+def edit_role(request, role_id):
+    role = get_object_or_404(AuthRole, pk=role_id)
+
+    can_change = not (
+        role.label in ('admin_regular', 'admin_no_bill') 
+    )
+
+    return render(request, 'auth_email_verify/edit_role.html', context={
+        'role': role,
+        'can_change': can_change    
     })

@@ -1,0 +1,236 @@
+.
+├── LICENSE
+├── media_manager
+│   ├── api
+│   │   ├── __init__.py
+│   │   ├── urls.py
+│   │   └── v1
+│   │       ├── admin.py
+│   │       ├── apps.py
+│   │       ├── __init__.py
+│   │       ├── models.py
+│   │       ├── serializers.py
+│   │       ├── tests.py
+│   │       ├── urls.py
+│   │       └── views.py
+│   ├── app
+│   │   ├── app
+│   │   │   ├── armonia
+│   │   │   ├── cron_tab
+│   │   │   ├── first_sync
+│   │   │   ├── keys.json
+│   │   │   └── static
+│   │   │       ├── 404.html
+│   │   │       ├── 500.html
+│   │   │       ├── expiry.html
+│   │   │       └── no-internet.html
+│   │   ├── armonia
+│   │   │   ├── armonia.py
+│   │   │   ├── cron_tab.py
+│   │   │   ├── downloaded_tracks.json
+│   │   │   ├── first_sync.py
+│   │   │   ├── keys.json
+│   │   │   └── static
+│   │   │       ├── 404.html
+│   │   │       ├── 500.html
+│   │   │       ├── expiry.html
+│   │   │       └── no-internet.html
+│   │   ├── cron
+│   │   │   ├── cron_tab.py
+│   │   │   └── uninstall.py
+│   │   ├── cron_tab.py
+│   │   ├── keys.json
+│   │   ├── license.py
+│   │   ├── requirements.txt
+│   │   └── static
+│   │       ├── 404.html
+│   │       ├── 500.html
+│   │       ├── expiry.html
+│   │       └── no-internet.html
+│   ├── arm.sql
+│   ├── celerybeat-schedule.db
+│   ├── core
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── backends.py
+│   │   ├── exception_handler.py
+│   │   ├── file_server.py
+│   │   ├── forms.py
+│   │   ├── __init__.py
+│   │   ├── management
+│   │   │   ├── commands
+│   │   │   │   ├── dependencies.py
+│   │   │   │   └── __init__.py
+│   │   │   └── __init__.py
+│   │   ├── mixins.py
+│   │   ├── models.py
+│   │   ├── tasks.py
+│   │   ├── templates
+│   │   │   ├── bootstrap_datetimepicker.html
+│   │   │   └── custom-datetimepicker.html
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   ├── utils.py
+│   │   ├── views.py
+│   │   └── widgets.py
+│   ├── data
+│   │   ├── cities.json
+│   │   ├── countries.json
+│   │   ├── countries+states+cities.json
+│   │   ├── countries+states.json
+│   │   ├── json
+│   │   │   ├── cities.json
+│   │   │   ├── countries.json
+│   │   │   ├── countries+states+cities.json
+│   │   │   ├── countries+states.json
+│   │   │   ├── states+cities.json
+│   │   │   └── states.json
+│   │   ├── states+cities.json
+│   │   └── states.json
+│   ├── faq
+│   ├── index.html?p=%2Fbig1a-e8d183d7f32a44fcdf9eee0b670c2b86.wav
+│   ├── manage.py
+│   ├── media_manager
+│   │   ├── celery.py
+│   │   ├── db.sqlite3
+│   │   ├── __init__.py
+│   │   ├── settings
+│   │   │   ├── base.py
+│   │   │   ├── __init__.py
+│   │   │   ├── local.py
+│   │   │   └── production.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   ├── sqlite3.db
+│   ├── static
+│   │   ├── css
+│   │   │   ├── bootstrap.css
+│   │   │   ├── bootstrap.css.map
+│   │   │   ├── bootstrap-datepicket.css
+│   │   │   ├── bootstrap-grid.css
+│   │   │   ├── bootstrap-grid.css.map
+│   │   │   ├── bootstrap-grid.min.css
+│   │   │   ├── bootstrap-grid.min.css.map
+│   │   │   ├── bootstrap.min.css
+│   │   │   ├── bootstrap.min.css.map
+│   │   │   ├── bootstrap-reboot.css
+│   │   │   ├── bootstrap-reboot.css.map
+│   │   │   ├── bootstrap-reboot.min.css
+│   │   │   ├── bootstrap-reboot.min.css.map
+│   │   │   ├── brands.min.css
+│   │   │   ├── custom.css
+│   │   │   ├── datetimepicker.css
+│   │   │   ├── font-awesome.min.css
+│   │   │   ├── fontawesome.min.css
+│   │   │   ├── parsley.css
+│   │   │   └── solid.min.css
+│   │   ├── csv-files
+│   │   │   ├── 20blend-archive.csv
+│   │   │   ├── 20-new-blend.csv
+│   │   │   ├── 20test.csv
+│   │   │   ├── dec.csv
+│   │   │   ├── delete & update daily.csv
+│   │   │   ├── jjjjjd.csv
+│   │   │   ├── latest.csv
+│   │   │   ├── new-prof.csv
+│   │   │   ├── new profile.csv
+│   │   │   ├── New Profile.csv
+│   │   │   ├── new-test.csv
+│   │   │   ├── test-profile.csv
+│   │   │   ├── test-sync.csv
+│   │   │   ├── test-xxx.csv
+│   │   │   ├── tt1.csv
+│   │   │   └── update only.csv
+│   │   ├── js
+│   │   │   ├── bootstrap.bundle.js
+│   │   │   ├── bootstrap.bundle.js.map
+│   │   │   ├── bootstrap.bundle.min.js
+│   │   │   ├── bootstrap.bundle.min.js.map
+│   │   │   ├── bootstrap-datepicker.js
+│   │   │   ├── bootstrap.js
+│   │   │   ├── bootstrap.js.map
+│   │   │   ├── bootstrap.min.js
+│   │   │   ├── bootstrap.min.js.map
+│   │   │   ├── custom.js
+│   │   │   ├── datetimepicker.js
+│   │   │   ├── jquery.fileupload.js
+│   │   │   ├── jquery-iframe.js
+│   │   │   ├── jquery.js
+│   │   │   ├── jquery.min.js
+│   │   │   ├── jquery-ui.js
+│   │   │   └── moment.js
+│   │   ├── webfonts
+│   │   │   ├── fa-brands-400.eot
+│   │   │   ├── fa-brands-400.svg
+│   │   │   ├── fa-brands-400.ttf
+│   │   │   ├── fa-brands-400.woff
+│   │   │   ├── fa-brands-400.woff2
+│   │   │   ├── fa-regular-400.eot
+│   │   │   ├── fa-regular-400.svg
+│   │   │   ├── fa-regular-400.ttf
+│   │   │   ├── fa-regular-400.woff
+│   │   │   ├── fa-regular-400.woff2
+│   │   │   ├── fa-solid-900.eot
+│   │   │   ├── fa-solid-900.svg
+│   │   │   ├── fa-solid-900.ttf
+│   │   │   ├── fa-solid-900.woff
+│   │   │   └── fa-solid-900.woff2
+│   │   └── xml
+│   │       ├── 20-new-blend.xml
+│   │       ├── archive5.xml
+│   │       ├── Cafe.xml
+│   │       ├── Ccc.xml
+│   │       ├── full-playlist.xml
+│   │       ├── KK.xml
+│   │       ├── latest.xml
+│   │       ├── MM.xml
+│   │       ├── new player.xml
+│   │       ├── new-player.xml
+│   │       ├── New-Profile.xml
+│   │       ├── new-release-1.xml
+│   │       ├── new-release-2.xml
+│   │       ├── new-release-3.xml
+│   │       ├── player-1.xml
+│   │       ├── Player Live.xml
+│   │       ├── pp.xml
+│   │       ├── Tea-Villa.xml
+│   │       ├── test-1.xml
+│   │       ├── Test1.xml
+│   │       ├── test-delete.xml
+│   │       ├── Test.xml
+│   │       ├── test-xxx.xml
+│   │       ├── test-zz.xml
+│   │       ├── Two-change.xml
+│   │       ├── xml-test.xml
+│   │       ├── xml.xml
+│   │       └── za6-belnd.xml
+│   ├── supervisord.conf
+│   ├── templates
+│   │   ├── base.html
+│   │   ├── frontend
+│   │   │   ├── add-license.html
+│   │   │   ├── add-ratings.html
+│   │   │   ├── add-tracks.html
+│   │   │   ├── add-user.html
+│   │   │   ├── create-profile.html
+│   │   │   ├── dashboard.html
+│   │   │   ├── delete-mood-modal.html
+│   │   │   ├── delete-profile-modal.html
+│   │   │   ├── delete-tracks-modal.html
+│   │   │   ├── disable-profile-modal.html
+│   │   │   ├── genre.html
+│   │   │   ├── location.html
+│   │   │   ├── login.html
+│   │   │   ├── moods.html
+│   │   │   ├── profile.html
+│   │   │   ├── profile-tracks.html
+│   │   │   ├── settings.html
+│   │   │   ├── sign-up.html
+│   │   │   ├── tracks.html
+│   │   │   └── user-profile.html
+│   │   ├── index.html
+│   │   └── wiget-date.html
+│   └── wget-log
+├── pkg.txt
+├── README.md
+└── requirements.txt

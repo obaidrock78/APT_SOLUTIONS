@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block ExtraCss %}
+<style type="text/css">
+  :root {
+    --widget-border-color: #dddedf;
+
+    --switch-ball-radius: 20px;
+    --switch-ball-h-margin: 4px;
+
+    --switch-line-width: 58px;
+    --switch-line-height: 28px;
+
+    --switch-toggle-animation-duration: 0.15s;
+  }
+
+  input.switch-input[type=checkbox] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+  }
+
+  .switch-container {
+    max-height: var(--switch-line-height);
+    height: var(--switch-line-height);
+    display: flex;
+    align-items: center;
+  }
+
+  label.switch-label {
+    cursor: pointer;
+    text-indent: -9999px;
+    background: grey;
+    display: block;
+    position: relative;
+    margin: 0;
+    padding: 0;
+
+    height: 100%;
+    width: var(--switch-line-width);
+
+    top: 2px;
+
+    border-radius: var(--switch-line-height);
+  }
+
+  label.switch-label:after {
+    content: '';
+    position: absolute;
+    transition: var(--switch-toggle-animation-duration) all;
+    background: #fff;
+    left: var(--switch-ball-h-margin);
+
+    width: var(--switch-ball-radius);
+    height: var(--switch-ball-radius);
+    top: calc((var(--switch-line-height) - var(--switch-ball-radius)) / 2);
+    border-radius: var(--switch-ball-radius);
+    border: 1px solid var(--widget-border-color);
+  }
+
+  input.switch-input[type=checkbox]:checked + label.switch-label {
+    background: #bada55;
+    /*background: #1d28fa;*/
+  }
+
+  input.switch-input[type=checkbox]:checked + label.switch-label:after {
+    left: calc(100% - var(--switch-ball-h-margin));
+    transform: translateX(-100%);
+  }
+
+  label.switch-label:active:after {
+    width: calc(var(--switch-line-width) - var(--switch-ball-h-margin) * 2 - 2px);
+  }
+</style>
+
+<style type="text/css">
+  h1, h2, h3, h4, h5, h6 { margin: 0; }
+  button:disabled {
+    cursor: not-allowed;
+    pointer-events: all !important;
+  }
+
+
+  .role-category-section {
+    border: 1px solid var(--widget-border-color);
+    border-radius: 0.5rem;
+    margin-bottom: 1.6rem;
+  }
+
+  .role-category-section > .category-title {
+    padding: 16px 24px; 
+    border-bottom: 1px solid var(--widget-border-color);
+
+    display: flex;
+    align-items: center;
+  }
+
+  .permission-list {
+    padding: 0;
+    margin: 0;
+  }
+
+  .permission {
+    display: flex;
+    align-items: center;
+    padding: 16px 24px;
+    border-top: 1px solid var(--widget-border-color);
+  }
+
+  .permission:first-child {
+    border-top: none;
+  }
+
+  .permission-label {
+    font-weight: 600;
+    font-size: 13px;
+    margin: 0 !important;
+  }
+
+  .permission .description {
+    margin-bottom: 0 0 2px;
+    color:  #52555a;
+    font-size: 13px;
+  }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="card-title mb-0">{{role.name}} Role</h3>
+      <button type="button" class="btn btn-info ml-auto">Done</button>
+    </div>
+    
+    <div class="role-category-section">
+      <div class="category-title">
+        <div class="switch-container">
+          <input class="switch-input" type="checkbox" id="switch" />
+          <label class="switch-label" for="switch">Toggle</label>
+        </div>
+        <h4 style="margin-left: 24px;">Files</h4>
+      </div>
+
+      <div>
+        <ul class="permission-list">
+          <li class="permission">
+            <div>
+              <label class="permission-label">Admin Tab</label>
+              <div class="description">View the admin tab, including information on client referrals, contact growth, and workload.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+</div>  
+{% endblock content %}

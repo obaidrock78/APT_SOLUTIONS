@@ -15,7 +15,6 @@ class AuthRole(BaseModel['AuthRole']):
         
     name = models.CharField(max_length=150)
     label = models.CharField(max_length=150, default='other')
-    is_default = models.BooleanField(default=False)
     rltype = models.CharField(
         max_length=20, 
         choices=(

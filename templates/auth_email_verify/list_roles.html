@@ -20,6 +20,11 @@
   .icon-hover {
     transition: background-color 0.1s ease-in;
   }
+  .icon-hover > i {
+    position: relative;
+    top: -2px;
+    left: -1px;
+  }
   .icon-hover:hover {
     background-color: #cdcecf !important;
   }
@@ -42,7 +47,7 @@
       <div class="list-wrapper">
         <ul>
           {% for rinfo in all_roles_infos %}
-          <li class='role-item'>
+          <li class='role-item' data-role-url="{% url 'edit_role' role_id=rinfo.role.id %}">
             <div class="w-100">
               <div class="d-flex">
                 <div class="wrapper">
@@ -54,32 +59,14 @@
                   </p>
                 </div>
                 <div class="action-wrapper wrapper ml-auto d-flex align-items-center">
-                  <button class="btn btn-icons btn-rounded icon-hover" title="Duplicate">
+                  <a role="button" href="#" class="btn btn-icons btn-rounded icon-hover" title="Duplicate">
                     <i class="mdi mdi-content-copy icon-md mr-3"></i>
-                  </button>
-                  <button class="btn btn-icons btn-rounded icon-hover" {% if not rinfo.can_delete %}disabled{% endif %} title="Delete">
+                  </a>
+                  <a role="button" href="#" class="btn btn-icons btn-rounded icon-hover" {% if not rinfo.can_delete %}disabled{% endif %} title="Delete">
                     <i 
                       class="mdi mdi-trash-can-outline text-{% if rinfo.can_delete %}danger{% else %}muted{% endif %} icon-md mr-3">
                     </i>
-                  </button>
-
-<!--                   <div class="dropdown">
-                    <button 
-                      type="button" 
-                      class="btn btn-icons btn-rounded icon-hover"
-                      id="more-btn-{{role.id}}" 
-                      data-toggle="dropdown" 
-                      aria-haspopup="true" 
-                      aria-expanded="false">
-                        <i class="mdi mdi-dots-vertical icon-md"></i>
-                    </button>
-
-                    <div class="dropdown-menu" aria-labelledby="more-btn-{{role.id}}">
-                      <a class="dropdown-item" href="#">Delete</a>
-                    </div>
-                  </div> -->
-
-
+                  </a>
                 </div>
               </div>
             </div>
@@ -91,3 +78,14 @@
   </div>
 </div>  
 {% endblock content %}
+
+{% block ExtraJs %}
+<script>
+  $(function() {
+    $('.role-item').on('click', function() {
+      const roleEditURL = $(this).attr('data-role-url');
+      window.location.href = roleEditURL;
+    });
+  });
+</script>
+{% endblock %}

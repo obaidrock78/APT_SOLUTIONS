@@ -34,10 +34,7 @@ class Command(BaseCommand):
 
         AuthRole.objects.create(name='Admin', label='admin_regular', rltype=AuthRole.RlType.BASIC)
         AuthRole.objects.create(name='Admin (No Billing)', label='admin_no_bill', rltype=AuthRole.RlType.BASIC)
-        default_role = AuthRole.objects.create(name='Staff (All Contacts)', label='staff_all', rltype=AuthRole.RlType.BASIC)
+        AuthRole.objects.create(name='Staff (All Contacts)', label='staff_all', rltype=AuthRole.RlType.BASIC)
         AuthRole.objects.create(name='Staff (All Contacts, No Billing)', label='staff_all_no_bill', rltype=AuthRole.RlType.BASIC)
         AuthRole.objects.create(name='Staff (Assigned Contacts)', label='staff_assigned', rltype=AuthRole.RlType.BASIC)
         AuthRole.objects.create(name='Staff (Assigned Contacts, No Billing)', label='staff_assigned_no_bill', rltype=AuthRole.RlType.BASIC)
-
-        default_role.is_default = True
-        default_role.save()
