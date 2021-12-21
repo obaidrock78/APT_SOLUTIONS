@@ -24,3 +24,10 @@ def create_user(full_name, username, password, verified=True, is_superuser=False
     pro_obj.save()
 
     return user
+
+def user_has_permission(user: User, perm: str):
+    role = user.role
+    if role is None:
+        return False
+
+    return role.has_permission(perm)

@@ -1,4 +1,6 @@
-import uuid  # To generate Token
+import random
+import uuid
+
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -9,7 +11,7 @@ from django.views import View
 from django.shortcuts import redirect, render, get_object_or_404
 from django.core.mail import send_mail
 
-from .actions import user_allow_admin
+from .actions import user_allow_admin, user_has_permission
 from .forms import SignUpForm, SignInForm
 from .models import AuthRole, Profile
 
@@ -126,8 +128,30 @@ def edit_role(request, role_id):
         role.label in ('admin_regular', 'admin_no_bill') 
     )
 
+    categories = categorized_permissions()
+    user_perms_cats = []
+
+    for category in categories:
+        user_perms = []
+        active_count = 0
+        for p in category.perms:
+            permission_active = user_has_permission(request.user, p.slug)
+            # permission_active = bool(random.getrandbits(1))
+            active_count += int(permission_active)
+
+            user_perms.append({
+                **p.__dict__,
+                'active': permission_active
+            })
+
+        user_perms_cats.append({
+            'name': category.name,
+            'full': active_count == len(category.perms),
+            'perms': user_perms
+        })
+
     return render(request, 'auth_email_verify/edit_role.html', context={
         'role': role,
         'can_change': can_change,
-        'perm_cats': categorized_permissions()
+        'perm_cats': user_perms_cats
     })

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block ExtraCss %}
+{% block css %}
 <style type="text/css">
   :root {
     --widget-border-color: #dddedf;
@@ -20,8 +20,8 @@
     --sw-ln-width: 50px;
     --sw-ln-height: 28px;
 
-    --sw-toggle-animation-duration: 0.15s;
-    --sw-bl-animation-scale: 1;
+    --sw-toggle-animation-duration: 0.25s;
+    --sw-bl-animation-scale: 0.8;
   }
 
   input.switch-input[type=checkbox] {
@@ -164,14 +164,23 @@
   <div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h3 class="card-title mb-0">{{role.name}} Role</h3>
-      <button type="button" class="btn btn-info ml-auto">Done</button>
+      <div>
+        <button type="button" onclick="OnReset();" class="btn btn-info ml-auto">Reset</button>
+        <button type="button" onclick="OnSave();" class="btn btn-success ml-auto">Done</button>
+      </div>
     </div>
-
+    <form autocomplete="off" onsubmit="return false;">
     {% for category in perm_cats %}
     <div class="role-category-section">
       <div class="category-header">
         <div class="switch-container">
-          <input class="switch-input" type="checkbox" id="cat-sw--{{forloop.counter}}" />
+          <input 
+            type="checkbox" 
+            class="switch-input category-switch"
+            id="cat-sw--{{forloop.counter}}"
+            {% if category.full %}checked{% endif %}
+            data-original-state="{% if category.full %}on{% else %}off{% endif %}"
+          />
           <label class="switch-label" for="cat-sw--{{forloop.counter}}">Toggle</label>
         </div>
         <h4 class='category-title'>{{ category.name }}</h4>
@@ -180,7 +189,15 @@
         {% for perm in category.perms %}
         <li class="permission">
           <div class="switch-container">
-            <input class="switch-input" type="checkbox" id="perm-sw--{{perm.slug}}" />
+            <input 
+              class="switch-input perm-switch"
+              id="perm-sw--{{perm.slug}}"
+              type="checkbox"
+              {% if perm.active %}checked{% endif %}
+
+              data-perm-name="{{perm.slug}}"
+              data-original-state="{% if perm.active %}on{% else %}off{% endif %}"
+            />
             <label class="switch-label" for="perm-sw--{{perm.slug}}">Toggle</label>
           </div>
           <div class="permission-info">
@@ -192,6 +209,54 @@
       </ul>
     </div>
     {% endfor %}
+    </form>
   </div>
-</div>  
+</div>
 {% endblock content %}
+
+{% block js %}
+<script>
+  function OnSave() {
+    const deltas = [];
+
+    $('.perm-switch').each(function() {
+      // console.log(this);
+      const originalState = $(this).attr('data-original-state') == 'on';
+      const newState = this.checked;
+
+      // Continue if no change is made
+      if (newState == originalState)
+        return
+
+      // If newState is true, meaning permission has been granted, then we want to add ('+') it. 
+      // Otherwise we want to remove ('-') it. 
+      const deltaSign = newState ? '+' : '-';
+
+      const permSlug = $(this).attr('data-perm-name');
+      deltas.push(deltaSign + permSlug);
+    });
+
+    console.log(deltas);
+  }
+
+  function OnReset() {
+    $('.category-switch').each(function(i) {
+      const originalState = $(this).attr('data-original-state') == 'on';
+      $(this).prop('checked', originalState);
+    });
+
+    $('.perm-switch').each(function(i) {
+      const originalState = $(this).attr('data-original-state') == 'on';
+      $(this).prop('checked', originalState);
+    });
+  }
+
+  $(function() {
+    $('.category-switch').on('change', function() {
+      $(this).parents('.role-category-section')
+              .find('input.perm-switch')
+              .prop('checked', this.checked);
+    });
+  });
+</script>
+{% endblock %}
