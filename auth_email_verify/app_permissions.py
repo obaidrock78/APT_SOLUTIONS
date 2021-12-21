@@ -1,6 +1,8 @@
 import dataclasses
 from functools import reduce
 
+from typing import Optional
+
 @dataclasses.dataclass(frozen=True)
 class AppPermission:
     slug: str
@@ -257,5 +259,5 @@ def categorized_permissions():
 def all_permissions():
     return __all_permissions
 
-def find_permission_obj(slug: str):
+def find_permission_obj(slug: str) -> Optional[AppPermission]:
     return next((item for item in __all_permissions if item.slug == slug), None)

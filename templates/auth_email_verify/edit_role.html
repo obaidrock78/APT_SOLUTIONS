@@ -165,7 +165,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h3 class="card-title mb-0">{{role.name}} Role</h3>
       <div>
-        <button type="button" onclick="OnReset();" class="btn btn-info ml-auto">Reset</button>
+        <button type="button" onclick="OnReset();" class="btn btn-info ml-auto">Reset Modifications</button>
         <button type="button" onclick="OnSave();" class="btn btn-success ml-auto">Done</button>
       </div>
     </div>
@@ -212,6 +212,12 @@
     </form>
   </div>
 </div>
+
+<form action="{% url 'apply_edit' %}" method="POST" id="role_form">
+  {% csrf_token %}
+  <input type="hidden" name="role_id" value="{{role.id}}" />
+  <input type="hidden" id="role_delta_json" name="role_delta_json" />
+</form>
 {% endblock content %}
 
 {% block js %}
@@ -236,7 +242,8 @@
       deltas.push(deltaSign + permSlug);
     });
 
-    console.log(deltas);
+    $('#role_delta_json').val(JSON.stringify(deltas));
+    $("#role_form").submit();
   }
 
   function OnReset() {

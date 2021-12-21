@@ -1,6 +1,7 @@
-import random
+import json
 import uuid
 
+from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -9,13 +10,14 @@ from django.http.response import HttpResponse
 
 from django.views import View
 from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse
 from django.core.mail import send_mail
 
-from .actions import user_allow_admin, user_has_permission
+from .actions import user_allow_admin
 from .forms import SignUpForm, SignInForm
 from .models import AuthRole, Profile
 
-from .app_permissions import categorized_permissions
+from .app_permissions import categorized_permissions, find_permission_obj
 
 def send_email_after_registration(email, token):
     subject = 'Verify Email'
@@ -129,29 +131,66 @@ def edit_role(request, role_id):
     )
 
     categories = categorized_permissions()
-    user_perms_cats = []
+    role_perms_cats = []
 
     for category in categories:
-        user_perms = []
+        role_perms = []
         active_count = 0
         for p in category.perms:
-            permission_active = user_has_permission(request.user, p.slug)
+            permission_active = role.has_permission(p.slug)
             # permission_active = bool(random.getrandbits(1))
             active_count += int(permission_active)
 
-            user_perms.append({
+            role_perms.append({
                 **p.__dict__,
                 'active': permission_active
             })
 
-        user_perms_cats.append({
+        role_perms_cats.append({
             'name': category.name,
             'full': active_count == len(category.perms),
-            'perms': user_perms
+            'perms': role_perms
         })
 
     return render(request, 'auth_email_verify/edit_role.html', context={
         'role': role,
         'can_change': can_change,
-        'perm_cats': user_perms_cats
+        'perm_cats': role_perms_cats
     })
+
+@require_http_methods(['POST'])
+@user_passes_test(user_allow_admin)
+def apply_role_changes(request):
+    role_id = request.POST.get('role_id', 0)
+
+    role = get_object_or_404(AuthRole, pk=role_id)
+
+    role_delta_json = request.POST.get('role_delta_json', None)
+
+    try:
+        if role_delta_json is None:
+            raise Exception
+        deltas = json.loads(role_delta_json)
+    except:
+        messages.error(request, 'Invalid input')
+        return redirect(reverse('edit_role', args=[role_id]))
+
+    for d in map(str, deltas):
+        change_sign = d[0]
+        perm_slug = d[1:]
+
+        permission = find_permission_obj(perm_slug)
+        if permission is None:
+            continue
+
+        if change_sign == '+':
+            role.give_permission(permission)
+        elif change_sign == '-':
+            role.remove_permission(permission)
+
+    if len(deltas) == 0:
+        messages.warning(request, "No changes made")
+    else:    
+        messages.success(request, "Changes applied successfully")
+        
+    return redirect(reverse('manage_roles'))
