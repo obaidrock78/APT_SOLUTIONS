@@ -13,4 +13,5 @@ urlpatterns = [
     path('roles/apply-edit', views.apply_role_changes, name='apply_edit'),
     path('roles/delete-role', views.delete_role, name='delete_role'),
     path('roles/create-role', views.create_role, name='create_role'),
+    path('user/list-permissions', views.user_permissions, name='user_permissions'),
 ]

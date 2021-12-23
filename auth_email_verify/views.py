@@ -2,7 +2,7 @@ import json
 import uuid
 
 from django.views.decorators.http import require_http_methods
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http.response import HttpResponse
@@ -15,7 +15,7 @@ from .actions import user_allow_admin, send_email_after_registration
 from .forms import SignUpForm, SignInForm
 from .models import AuthRole, Profile, User, RolePermission
 
-from .app_permissions import categorized_permissions, find_permission_obj
+from .app_permissions import categorized_permissions, find_permission_obj, find_permission_objs_many
 
 # Account Verification
 def account_verify(request, token):
@@ -251,3 +251,11 @@ def delete_role(request):
         messages.success(request, "Role deleted successfully")
 
     return redirect(reverse('manage_roles'))
+
+@login_required
+def user_permissions(request):
+    current_user: User = request.user
+    perm_objs = find_permission_objs_many(*current_user.role.flat_permissions_list())
+    return render(request, 'auth_email_verify/user_permissions.html', context={
+        'perm_objs': perm_objs    
+    })

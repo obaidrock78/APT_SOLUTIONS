@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block css %}
+<style>
+  .p-title {
+    font-weight: 600;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="card-title mb-0">Your Permissions</h3>
+    </div>
+    <div class="todo-list-container">
+      <div class="list-wrapper">
+        <ul>
+          {% for permission in perm_objs %}
+            <li>
+              <span class="p-title">{{permission.title}}</span> &nbsp;-&nbsp; <span class="p-desc">{{permission.desc}}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>  
+{% endblock content %}
