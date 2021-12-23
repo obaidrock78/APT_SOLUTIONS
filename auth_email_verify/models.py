@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Iterable
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from auth_email_verify.app_permissions import AppPermission
@@ -30,16 +30,28 @@ class AuthRole(BaseModel['AuthRole']):
 
     def give_permission(self, permission: AppPermission):
         if not permission.slug in self.flat_permissions_list():
-            RolePermission.objects.create(
-                role=self,
-                perm_slug=permission.slug
-            )
+            self.wrap_permission_object(permission).save()
+
+    def wrap_permission_object(self, permission: AppPermission):
+        perm = RolePermission()
+        perm.role = self
+        perm.perm_slug = permission.slug
+
+        return perm
 
     def remove_permission(self, permission: AppPermission):
         RolePermission.objects.filter(role=self, perm_slug=permission.slug).delete()
 
     def has_permission(self, perm_slug: str):
         return perm_slug in self.flat_permissions_list()
+
+    def give_permissions_bulk(self, permissions: Iterable[AppPermission]):
+        p_objs = [
+            self.wrap_permission_object(p)
+            for p in permissions
+            if not self.has_permission(p.slug)
+        ]
+        RolePermission.objects.bulk_create(p_objs)
 
     def __str__(self):
         return self.name

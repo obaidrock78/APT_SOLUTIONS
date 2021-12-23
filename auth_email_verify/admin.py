@@ -14,5 +14,19 @@ class ProfileAdmin(admin.ModelAdmin):
 class RolePermissionAdmin(admin.ModelAdmin):
     list_filter = ['role']
 
+
+class CustomUserAdmin(UserAdmin):
+    fieldsets = (
+        *UserAdmin.fieldsets,  # original form fieldsets, expanded
+        (                      # new fieldset added on to the bottom
+            'Additional Fields',  # group heading of your choice; set to None for a blank space instead of a header
+            {
+                'fields': (
+                    'role',
+                ),
+            },
+        ),
+    )
+
 admin.site.register(AuthRole)
-admin.site.register(User, UserAdmin)
+admin.site.register(User, CustomUserAdmin)

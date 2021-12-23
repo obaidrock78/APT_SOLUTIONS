@@ -163,12 +163,62 @@
 <div class="card">
   <div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3 class="card-title mb-0">{{role.name}} Role</h3>
+      <h3 class="card-title mb-0">Edit Role</h3>
       <div>
-        <button type="button" onclick="OnReset();" class="btn btn-info ml-auto">Reset Modifications</button>
-        <button type="button" onclick="OnSave();" class="btn btn-success ml-auto">Done</button>
+        <button 
+          type="button"
+          onclick="OnReset();"
+          class="btn btn-info ml-auto"
+          {% if not can_change %}disabled{% endif %}
+        >
+          Reset Modifications
+        </button>
+        <button 
+          type="button"
+          class="btn btn-success ml-auto"
+          {% if can_change %}
+          onclick="OnSave();"
+          {% else %}
+          onclick="window.location.href = `{% url 'manage_roles' %}`"
+          {% endif %}
+        >
+          Done
+        </button>
       </div>
     </div>
+
+    {% if not can_change %}
+      <div class="alert alert-info" style="font-size: 15px;" role="alert">
+          This role <strong>{{role.name}}</strong> cannot be modified. Instead you can duplicate this role and edit the new role
+      </div>
+    {% endif %}
+
+    <form 
+      autocomplete="off"
+      action="{% url 'apply_edit' %}" 
+      method="POST" 
+      id="role_form"
+      {% if not can_change %}
+      onsubmit="event.preventDefault(); return false;" 
+      {% endif %}
+    >
+      {% csrf_token %}
+      <input type="hidden" name="role_id" value="{{role.id}}" />
+      <input type="hidden" id="role_delta_json" name="role_delta_json" value="[]" />
+      <div class="mb-3">
+        <label class="label" style="font-weight: 600;">Role Name</label>
+        <input
+          class="form-control" 
+          style="border-color: #9f9f9f; font-size: 14px;" 
+          name="role_name" 
+          placeholder="Enter Role Name"
+          value="{{role.name}}"
+          required
+          {% if not can_change %}disabled{% endif %}
+        />
+      </div>
+    </form>
+
     <form autocomplete="off" onsubmit="return false;">
     {% for category in perm_cats %}
     <div class="role-category-section">
@@ -179,6 +229,8 @@
             class="switch-input category-switch"
             id="cat-sw--{{forloop.counter}}"
             {% if category.full %}checked{% endif %}
+            {% if not can_change %}disabled{% endif %}
+
             data-original-state="{% if category.full %}on{% else %}off{% endif %}"
           />
           <label class="switch-label" for="cat-sw--{{forloop.counter}}">Toggle</label>
@@ -194,6 +246,7 @@
               id="perm-sw--{{perm.slug}}"
               type="checkbox"
               {% if perm.active %}checked{% endif %}
+              {% if not can_change %}disabled{% endif %}
 
               data-perm-name="{{perm.slug}}"
               data-original-state="{% if perm.active %}on{% else %}off{% endif %}"
@@ -212,12 +265,6 @@
     </form>
   </div>
 </div>
-
-<form action="{% url 'apply_edit' %}" method="POST" id="role_form">
-  {% csrf_token %}
-  <input type="hidden" name="role_id" value="{{role.id}}" />
-  <input type="hidden" id="role_delta_json" name="role_delta_json" />
-</form>
 {% endblock content %}
 
 {% block js %}
@@ -257,6 +304,18 @@
       $(this).prop('checked', originalState);
     });
   }
+
+
+  function PreventEnterSubmit(event)
+  {
+    if (event.keyCode == 13)
+    {
+      event.preventDefault();
+      return false;
+    }
+  }
+
+  $('input[name=role_name]').on('change keypress keydown keyup', PreventEnterSubmit);
 
   $(function() {
     $('.category-switch').on('change', function() {

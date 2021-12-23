@@ -9,19 +9,32 @@ class AppPermission:
     title: str
     desc: str
 
+    def __repr__(self):
+        return "<AppPermission: \'%s\'>" % self.title
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, AppPermission):
+            return False
+
+        return self.slug == other.slug
+
+    def __hash__(self):
+        return hash((self.slug,))
+
 @dataclasses.dataclass(frozen=True)
 class PermCategory: 
     name: str
+    identifier: str
     perms: list[AppPermission]
 
 
-__categorized_permissions = [
-    PermCategory('Home', [
+__categorized_permissions: list[PermCategory] = [
+    PermCategory('Home', 'home', [
         AppPermission(slug='admin_tab', title="Admin Tab", 
             desc="View the admin tab, including information on client referrals, contact growth, and workload.")
     ]),
 
-    PermCategory('Contacts', [
+    PermCategory('Contacts', 'contacts', [
         AppPermission(slug='contacts_access_all', title="Access To All Contacts", 
             desc="Access to contacts the user is not assigned to, including their work, files, billing, and time."),
 
@@ -57,7 +70,7 @@ __categorized_permissions = [
             desc="Permanently delete contacts from the archive."),
     ]),
 
-    PermCategory('Work', [
+    PermCategory('Work', 'work', [
         AppPermission(slug='work_crud', title="Create, Edit, and Assign Work",
             desc="Create new generic tasks, client requests, organizers, notices, eSignature requests, and subtasks in Canopy. "
             "Edit work details and assign work to other team members."),
@@ -86,12 +99,12 @@ __categorized_permissions = [
             desc="Permanently delete work from the archive."),
     ]),
 
-    PermCategory('Engagements', [
+    PermCategory('Engagements', 'engagements', [
         AppPermission(slug='engagements', title="Engagements", 
             desc="View and manage tax resolution engagements. Create and send letters and engagement client requests directly to contacts."),
     ]),
 
-    PermCategory('Files', [
+    PermCategory('Files', 'files', [
         AppPermission(slug='contacts_files', title="Contact Files", 
             desc="View and download files for contacts the user has access to."),
 
@@ -117,7 +130,7 @@ __categorized_permissions = [
             desc="Permanently delete files from the archive."),
     ]),
 
-    PermCategory('Transcripts', [
+    PermCategory('Transcripts', 'transcripts', [
         AppPermission(slug='transcripts', title="Transcripts", 
             desc="View and manage transcripts for contacts the user has access to."),
 
@@ -125,7 +138,7 @@ __categorized_permissions = [
             desc="Pull transcripts for contacts the user has access to."),
     ]),
 
-    PermCategory('Billing', [
+    PermCategory('Billing', 'billing', [
         AppPermission(slug='invoices', title="Invoices", 
             desc="View invoices for contacts the user has access to."),
 
@@ -160,7 +173,7 @@ __categorized_permissions = [
             desc="View the Work-In-Progress report for billing"),
     ]),
 
-    PermCategory('Time', [
+    PermCategory('Time', 'time', [
         AppPermission(slug='time_team_saved', title="Team Member Saved Time", 
             desc="View team members' time entries."),
 
@@ -184,7 +197,7 @@ __categorized_permissions = [
             desc="Permanently delete time entries from the archive."),
     ]),
 
-    PermCategory('Templates', [
+    PermCategory('Templates', 'templates', [
         AppPermission(slug='tmpls_task', title="Task Templates", 
             desc="View, manage, and create team templates for task workflows. Excludes private task templates."),
 
@@ -214,7 +227,7 @@ __categorized_permissions = [
             desc="View, manage, and create templates for notices."),
     ]),
 
-    PermCategory('Settings', [
+    PermCategory('Settings', 'settings', [
         AppPermission(slug='sett_comp_info', title="Company Information", 
             desc="Access and edit company information, such as firm name, EIN, firm size, address, and phone number."),
 
@@ -251,13 +264,22 @@ __categorized_permissions = [
     ]),
 ]
 
-__all_permissions = list(reduce(lambda a, b: a + b, map(lambda catd_perm: catd_perm.perms, __categorized_permissions), []))
+__all_permissions: list[AppPermission] = list(reduce(
+    lambda a, b: a + b, 
+    map(lambda catd_perm: catd_perm.perms, __categorized_permissions), 
+    []
+))
 
 def categorized_permissions():
     return __categorized_permissions
 
-def all_permissions():
+def all_permissions(category=None):
+    if category:
+        return next((item.perms for item in __categorized_permissions if item.identifier == category), [])
     return __all_permissions
 
 def find_permission_obj(slug: str) -> Optional[AppPermission]:
     return next((item for item in __all_permissions if item.slug == slug), None)
+
+def find_permission_objs_many(*slugs: str) -> set[AppPermission]:
+    return set(filter(lambda perm: perm.slug in slugs, __all_permissions))

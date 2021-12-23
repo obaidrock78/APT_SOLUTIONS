@@ -10,5 +10,7 @@ urlpatterns = [
 
     path('roles/manage', views.manage_roles, name='manage_roles'),
     path('roles/<int:role_id>/edit', views.edit_role, name='edit_role'),
-    path('roles/apply_edit', views.apply_role_changes, name='apply_edit'),
+    path('roles/apply-edit', views.apply_role_changes, name='apply_edit'),
+    path('roles/delete-role', views.delete_role, name='delete_role'),
+    path('roles/create-role', views.create_role, name='create_role'),
 ]
