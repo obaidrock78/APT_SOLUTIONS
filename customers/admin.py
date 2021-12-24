@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, Customer, ServiceItem, Supplier, Client#, User
+from .models import Company, Customer, ServiceItem, Supplier, Client
 
 # Register your models here.
 

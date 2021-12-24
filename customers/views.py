@@ -3,13 +3,13 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import Client, Company, Customer, ServiceItem, Supplier#, User
+from .models import Client, Company, Customer, ServiceItem, Supplier
 
 # Create your views here.
 
 
 # For Index page with View
-from customers.forms import CustomerForm, ServiceItemForm, SupplierForm#, UserForm
+from customers.forms import CustomerForm, ServiceItemForm, SupplierForm
 from .utilities import get_company
 
 

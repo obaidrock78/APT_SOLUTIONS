@@ -1,5 +1,5 @@
 from django import forms
-from .models import Customer, ServiceItem, Supplier#, User
+from .models import Customer, ServiceItem, Supplier
 
 
 # class UserForm(forms.ModelForm):
