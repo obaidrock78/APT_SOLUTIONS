@@ -8,13 +8,13 @@ from django.template import  Template
 from django.utils.html import format_html
 from django.template.loader import render_to_string
 
-from .models import Client, Company, Customer, Supplier#, User
+from .models import Client, Company, Customer, ServiceItem, Supplier#, User
 
 # Create your views here.
 
 
 # For Index page with View
-from customers.forms import CustomerForm, SupplierForm#, UserForm
+from customers.forms import CustomerForm, ServiceItemForm, SupplierForm#, UserForm
 from .utilities import get_company
 
 
@@ -44,6 +44,23 @@ def client_list(request):
     else:
         clients = Client.objects.all()
     return render(request, 'customers/index.html', {'customers': clients})
+
+@login_required(login_url='signin')
+def services(request):
+    if request.method == "GET":
+        services = ServiceItem.objects.all()
+        form = ServiceItemForm()
+        context = {'services': services, 'form': form}
+        return render(request, 'customers/services.html', context)
+    elif request.method == "POST":
+        form = ServiceItemForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("customers:services")
+
+@login_required(login_url='signin')
+def settings(request):
+    return render(request, 'customers/settings.html')
 
 
 # @login_required

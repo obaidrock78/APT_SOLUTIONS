@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block ExtraCss %}
+<style>
+
+    #create-service-model .profile-cont{
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-direction: column;
+    }
+    #create-service-model .profile-cont img{
+        border-radius: 50%;
+    }
+    #create-service-model .profile-cont .customer-type-cont{
+        display: flex;
+        flex-direction: row;
+    }
+    #create-service-model .profile-cont .input-cont{
+        margin: 5px;
+        padding: 3px 8px;
+        border-radius: 35px;
+        background-color: #fff;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    #create-service-model .profile-cont .input-cont input{
+        margin-left: 5px !important;
+    }
+    #create-service-model .profile-cont .input-cont .label{
+        margin: 0 !important;
+        font-size: small;
+    }
+    .modal-header{
+        border-bottom: 1px solid rgba(0,0,0,.1);
+        padding: 10px !important;
+        align-items: center !important;
+    }
+</style>
+{% endblock ExtraCss %}
+
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <h2>Service Items</h2>
+        </div>
+        <div class="col text-right">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create-service-model">
+                New Service Item
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="create-service-model" tabindex="-1" aria-labelledby="create-service-model-label" aria-hidden="true">
+        <div class="modal-dialog" style="max-width: 65%;">
+          <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add a contact</h5>
+                <button type="button" class="btn btn-secondary" onclick="submitForm('new-service-form')">Submit</button>
+            </div>
+            <div class="modal-body">
+              <form action="{% url 'customers:services' %}" method="POST" id="new-service-form" autocomplete="off">
+                {% csrf_token %}
+                <div id="common-section-2">
+                  <div class="mb-3" id="name-field"><input class="form-control" name="{{form.name.html_name}}" placeholder="Enter Service Name"></div>
+                  <div class="row mb-3">
+                    <div class="col-6" id="rate-field"><input class="form-control" name="{{form.rate.html_name}}" placeholder="Enter Rate"></div>
+                    <div class="col-6" id="vat-rate-field"><input class="form-control" name="{{form.vat_rate.html_name}}" placeholder="Enter Vat Rate"></div>
+                  </div>
+                  <div class="mb-3" id="description-field"><textarea class="form-control" name="{{form.description.html_name}}" rows="5" placeholder="Add a description"></textarea></div>
+                </div>
+                <div id="extra-fields-business">
+                  <div class="mb-3" id="entity-type-field">
+                    <label for="{{form.billing_type.id_for_label}}">Billing Type</label>
+                    {{form.billing_type}}
+                  </div>
+                  <div class="mb-3" id="service-field"><input type="text" class="form-control" name="{{form.service_code.html_name}}" placeholder="Enter Service Code"></div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Service Items List</h4>
+            <div class="row">
+                <div class="col-12">
+                    <div id="order-listing_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
+                        {% comment %} <div class="row">
+                            <a href="{% url 'customers:clients_list' %}?type=client" class="btn btn-outline-primary mx-2">Clients</a>
+                            <a href="{% url 'customers:clients_list' %}?type=lead" class="btn btn-outline-primary mx-2">Leads</a>
+                            <a href="{% url 'customers:clients_list' %}" class="btn btn-outline-primary mx-2">All Contacts</a>
+                        </div> {% endcomment %}
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="order-listing" class="table dataTable no-footer" role="grid"
+                                       aria-describedby="order-listing_info">
+                                    <thead>
+                                    <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Order #: activate to sort column ascending"
+                                            style="width: 82.1px;">Name
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Order #: activate to sort column ascending"
+                                            style="width: 82.1px;">Description
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Purchased On: activate to sort column ascending"
+                                            style="width: 140.988px;">Rate
+                                        </th>
+                                        <th class="sorting_asc" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Customer: activate to sort column descending"
+                                            aria-sort="ascending" style="width: 102.387px;">Billing Type
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Ship to: activate to sort column ascending"
+                                            style="width: 79.0125px;">Tax Rate
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Base Price: activate to sort column ascending"
+                                            style="width: 110.562px;">Code
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for service in services %}
+                                        <tr role="row" class="odd">
+                                            <td class="">{{ service.name }}</td>
+                                            <td class="">{{ service.description }}</td>
+                                            <td class="sorting_1">${{ service.rate }}</td>
+                                            <td>{{ service.get_billing_type_display }}</td>
+                                            <td>${{ service.vat_rate }}</td>
+                                            <td>{{ service.service_code }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block ExtraJs %}
+
+<script src="{% static 'app/customers.js' %}"></script>
+<script>
+  function submitForm(formId) {
+    var form = document.getElementById(formId);
+    if (form.checkValidity())
+      form.submit();
+    else
+      form.reportValidity();
+  }
+</script>
+
+{% endblock ExtraJs %}

@@ -173,3 +173,22 @@ class Client(models.Model):
 
     def __str__(self):
         return f"{self.trading_name} ({self.customer_type}) ---- ({self.account_type})"
+    
+    
+class ServiceItem(models.Model):
+    BILLING_TYPES = (
+        ('a', 'On Acceptance'),
+        ('c', 'On Completion'),
+        ('r', 'Recurring'),
+    )
+
+    name = models.CharField(max_length=250)
+    description = models.TextField()
+    rate = models.PositiveIntegerField(default=0)
+    vat_rate = models.PositiveIntegerField(default=0)
+    billing_type = models.CharField(max_length=50, choices=BILLING_TYPES)
+    service_code = models.CharField(max_length=500)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name}-(${self.rate})"

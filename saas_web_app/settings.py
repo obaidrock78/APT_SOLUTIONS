@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-(v$)%92l#mz)5^md71m*j9%!%0hun@yd_ywr-q@o+@@=vh_3$y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['infinityApp.pythonanywhere.com', 'localhost']
+ALLOWED_HOSTS = ['infinityApp.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -122,7 +122,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# STATIC_ROOT = os.path.join(BASE_DIR,'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static-comp')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

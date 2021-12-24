@@ -46,7 +46,15 @@ class SignUpView(View):
             # print(new_user)
             uid = uuid.uuid4()
             # print(uid)
-            pro_obj = Profile(user=new_user, token=uid)
+
+            new_user.refresh_from_db()
+
+            # new_user.profile.token = uid
+            # new_user.profile.save()
+            # pro_obj = Profile(user=new_user, token=uid)
+            pro_obj, created = Profile.objects.get_or_create(user=new_user)
+            # print(pro_obj, created)
+            pro_obj.token = uid
             pro_obj.save()
 
             send_email_after_registration(new_user.email, uid)
@@ -60,7 +68,7 @@ class SignInView(View):
     def get(self, request):
         # if not request.user.is_authenticated:
             # user = authenticate(username="PaulS", password="Jordyn16$")
-            # login(request, user)        
+            # login(request, user)
         # return redirect('customers:clients_list')
 
         form = SignInForm()
@@ -81,7 +89,7 @@ class SignInView(View):
             user = authenticate(username=username,  password=password)
 
             pro = Profile.objects.get(user=user)
-            # print(pro)
+
             if pro.verify:
                 # print("Ok")
                 login(request, user)

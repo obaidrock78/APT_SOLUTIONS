@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        .settings-row .col{
+            max-width: 250px;
+            min-width: 250px;
+            height: 180px;
+            margin-bottom: 15px;
+        }
+        .settings-row .col .card{
+            width: 100%;
+            height: 100%;
+        }
+        .setting-title{
+            font-size: large;
+            font-weight: bold;
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+
+
+    <div class="row mb-5">
+        <div class="col">
+            <h3 class="text-muted">Business Settings</h3>
+            <div class="row settings-row">
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col">
+            <h3 class="text-muted">Invoicing Settings</h3>
+            <div class="row settings-row">
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+                <div class="col">
+                    <a class="card text-center shadow-sm" href="{% url 'customers:services' %}">
+                        <div class="card-body text-muted">
+                            <h5 class="card-title"><i class="fas fa-running fa-4x"></i></h5>
+                            <p class="card-text setting-title">Service Items</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col">
+            <h3 class="text-muted">Pricing Settings</h3>
+            <div class="row settings-row">
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
