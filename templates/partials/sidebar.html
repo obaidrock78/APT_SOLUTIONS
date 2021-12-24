@@ -42,7 +42,9 @@
                     alt="menu icon"> <span class="menu-title">Roles/Permissions</span><i class="menu-arrow"></i></a>
             <div class="collapse" id="sidebar-dropdown-3">
                 <ul class="nav flex-column sub-menu">
+                    {% if user.is_superuser %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'manage_roles' %}">Manage Roles</a></li>
+                    {% endif %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'user_permissions' %}">View Your Permissions</a></li>
                 </ul>
             </div>
