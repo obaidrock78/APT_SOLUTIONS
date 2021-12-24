@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block css %}
+<style type="text/css">
+  :root {
+    --widget-border-color: #dddedf;
+
+    /* sw-bl = "switch ball" */
+    /* sw-ln = "switch line" */
+
+    --sw-ln-on-bg: #fa1d84;
+    --sw-ln-disabled-on-bg: #f5bada;
+
+    --sw-ln-off-bg: #afafaf;
+    --sw-ln-disabled-off-bg: #dfdfdf;
+
+    --sw-bl-radius: 18px;
+    --sw-bl-h-margin: 5px;
+
+    --sw-ln-width: 50px;
+    --sw-ln-height: 28px;
+
+    --sw-toggle-animation-duration: 0.25s;
+    --sw-bl-animation-scale: 0.8;
+  }
+
+  input.switch-input[type=checkbox] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+  }
+
+  .switch-container {
+    max-height: var(--sw-ln-height);
+    height: var(--sw-ln-height);
+    display: flex;
+    align-items: center;
+  }
+
+  label.switch-label {
+    cursor: pointer;
+    text-indent: -9999px;
+    background: var(--sw-ln-off-bg);
+    display: block;
+    position: relative;
+    margin: 0;
+    padding: 0;
+
+    height: 100%;
+    width: var(--sw-ln-width);
+
+    top: 2px;
+
+    border-radius: var(--sw-ln-height);
+  }
+
+  label.switch-label:after {
+    content: '';
+    position: absolute;
+    transition: var(--sw-toggle-animation-duration) all;
+    background: #fff;
+    left: var(--sw-bl-h-margin);
+
+    width: var(--sw-bl-radius);
+    height: var(--sw-bl-radius);
+    top: calc((var(--sw-ln-height) - var(--sw-bl-radius)) / 2);
+    border-radius: var(--sw-bl-radius);
+    border: 1px solid var(--widget-border-color);
+  }
+
+  input.switch-input[type=checkbox]:disabled + label.switch-label {
+    cursor: not-allowed;
+  }
+
+  input.switch-input[type=checkbox]:checked + label.switch-label {
+    background: var(--sw-ln-on-bg);
+  }
+
+  input.switch-input[type=checkbox]:disabled:checked + label.switch-label {
+    background: var(--sw-ln-disabled-on-bg);
+  }
+  input.switch-input[type=checkbox]:disabled:not(:checked) + label.switch-label {
+    background: var(--sw-ln-disabled-off-bg);
+  }
+
+
+  input.switch-input[type=checkbox]:checked + label.switch-label:after {
+    left: calc(100% - var(--sw-bl-h-margin));
+    transform: translateX(-100%);
+  }
+
+  label.switch-label:active:after {
+    width: calc(var(--sw-bl-radius) * var(--sw-bl-animation-scale));
+  }
+</style>
+
+<style type="text/css">
+  h1, h2, h3, h4, h5, h6 { margin: 0; }
+  button:disabled {
+    cursor: not-allowed;
+    pointer-events: all !important;
+  }
+
+
+  .role-category-section {
+    border: 1px solid var(--widget-border-color);
+    border-radius: 0.5rem;
+    margin-bottom: 1.6rem;
+  }
+
+  .role-category-section > .category-header {
+    padding: 16px 24px; 
+    border-bottom: 1px solid var(--widget-border-color);
+
+    display: flex;
+    align-items: center;
+  }
+
+  .category-header .category-title {
+    margin-left: 24px;
+    font-size: 19px;
+  }
+
+  .permission-list {
+    padding: 0;
+    margin: 0;
+  }
+
+  .permission {
+    display: flex;
+    align-items: center;
+    padding: 16px 24px;
+    border-top: 1px solid var(--widget-border-color);
+  }
+
+  .permission:first-child {
+    border-top: none;
+  }
+
+  .permission-info {
+    margin-left: 24px;
+  }
+
+  .permission-info .permission-label {
+    font-weight: 700;
+    font-size: 13px;
+    margin: 0 !important;
+  }
+
+  .permission-info .description {
+    margin-bottom: 0 0 2px;
+    font-weight: 400;
+    font-size: 13px;
+    color: #52555a;
+    font-size: 13px;
+  }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="card-title mb-0">Edit Role</h3>
+      <div>
+        <button 
+          type="button"
+          onclick="OnReset();"
+          class="btn btn-info ml-auto"
+          {% if not can_change %}disabled{% endif %}
+        >
+          Reset Modifications
+        </button>
+        <button 
+          type="button"
+          class="btn btn-success ml-auto"
+          {% if can_change %}
+          onclick="OnSave();"
+          {% else %}
+          onclick="window.location.href = `{% url 'manage_roles' %}`"
+          {% endif %}
+        >
+          Done
+        </button>
+      </div>
+    </div>
+
+    {% if not can_change %}
+      <div class="alert alert-info" style="font-size: 15px;" role="alert">
+          This role <strong>{{role.name}}</strong> cannot be modified. Instead you can duplicate this role and edit the new role
+      </div>
+    {% endif %}
+
+    <form 
+      autocomplete="off"
+      action="{% url 'apply_edit' %}" 
+      method="POST" 
+      id="role_form"
+      {% if not can_change %}
+      onsubmit="event.preventDefault(); return false;" 
+      {% endif %}
+    >
+      {% csrf_token %}
+      <input type="hidden" name="role_id" value="{{role.id}}" />
+      <input type="hidden" id="role_delta_json" name="role_delta_json" value="[]" />
+      <div class="mb-3">
+        <label class="label" style="font-weight: 600;">Role Name</label>
+        <input
+          class="form-control" 
+          style="border-color: #9f9f9f; font-size: 14px;" 
+          name="role_name" 
+          placeholder="Enter Role Name"
+          value="{{role.name}}"
+          required
+          {% if not can_change %}disabled{% endif %}
+        />
+      </div>
+    </form>
+
+    <form autocomplete="off" onsubmit="return false;">
+    {% for category in perm_cats %}
+    <div class="role-category-section">
+      <div class="category-header">
+        <div class="switch-container">
+          <input 
+            type="checkbox" 
+            class="switch-input category-switch"
+            id="cat-sw--{{forloop.counter}}"
+            {% if category.full %}checked{% endif %}
+            {% if not can_change %}disabled{% endif %}
+
+            data-original-state="{% if category.full %}on{% else %}off{% endif %}"
+          />
+          <label class="switch-label" for="cat-sw--{{forloop.counter}}">Toggle</label>
+        </div>
+        <h4 class='category-title'>{{ category.name }}</h4>
+      </div>
+      <ul class="permission-list">
+        {% for perm in category.perms %}
+        <li class="permission">
+          <div class="switch-container">
+            <input 
+              class="switch-input perm-switch"
+              id="perm-sw--{{perm.slug}}"
+              type="checkbox"
+              {% if perm.active %}checked{% endif %}
+              {% if not can_change %}disabled{% endif %}
+
+              data-perm-name="{{perm.slug}}"
+              data-original-state="{% if perm.active %}on{% else %}off{% endif %}"
+            />
+            <label class="switch-label" for="perm-sw--{{perm.slug}}">Toggle</label>
+          </div>
+          <div class="permission-info">
+            <label class="permission-label">{{perm.title}}</label>
+            <div class="description">{{perm.desc}}</div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+    </form>
+  </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script>
+  function OnSave() {
+    const deltas = [];
+
+    $('.perm-switch').each(function() {
+      // console.log(this);
+      const originalState = $(this).attr('data-original-state') == 'on';
+      const newState = this.checked;
+
+      // Continue if no change is made
+      if (newState == originalState)
+        return
+
+      // If newState is true, meaning permission has been granted, then we want to add ('+') it. 
+      // Otherwise we want to remove ('-') it. 
+      const deltaSign = newState ? '+' : '-';
+
+      const permSlug = $(this).attr('data-perm-name');
+      deltas.push(deltaSign + permSlug);
+    });
+
+    $('#role_delta_json').val(JSON.stringify(deltas));
+    $("#role_form").submit();
+  }
+
+  function OnReset() {
+    $('.category-switch').each(function(i) {
+      const originalState = $(this).attr('data-original-state') == 'on';
+      $(this).prop('checked', originalState);
+    });
+
+    $('.perm-switch').each(function(i) {
+      const originalState = $(this).attr('data-original-state') == 'on';
+      $(this).prop('checked', originalState);
+    });
+  }
+
+
+  function PreventEnterSubmit(event)
+  {
+    if (event.keyCode == 13)
+    {
+      event.preventDefault();
+      return false;
+    }
+  }
+
+  $('input[name=role_name]').on('change keypress keydown keyup', PreventEnterSubmit);
+
+  $(function() {
+    $('.category-switch').on('change', function() {
+      $(this).parents('.role-category-section')
+              .find('input.perm-switch')
+              .prop('checked', this.checked);
+    });
+  });
+</script>
+{% endblock %}

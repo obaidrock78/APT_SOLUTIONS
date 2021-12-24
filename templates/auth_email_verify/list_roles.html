@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block ExtraCss %}
+<style type="text/css">
+  .role-item {
+    border-style: solid;
+    border-color: #dddedf;
+    border-width: 1px 0px 1px;
+
+    cursor: pointer;
+
+    padding: 10px 10px !important;
+  }
+  .role-item:hover {
+    background-color: #dddedf;
+  }
+  .dropdown-menu {
+    border: 1px solid #a2a2a2;
+  }
+  .icon-hover {
+    transition: background-color 0.1s ease-in;
+  }
+  .icon-hover > i {
+    position: relative;
+    top: -2px;
+    left: -1px;
+  }
+  .icon-hover:hover {
+    background-color: #cdcecf !important;
+  }
+  button:disabled {
+    cursor: not-allowed;
+    pointer-events: all !important;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="card-title mb-0">Roles and Permissions</h3>
+      <form action="{% url 'create_role' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name='source_role_id' value="__create_new__">
+        <button type="submit" class="btn btn-primary ml-auto">Add Role<i class="mdi mdi-plus"></i></button>
+      </form>
+    </div>
+    <div class="todo-list-container">
+      <div class="list-wrapper">
+        <ul>
+          {% for rinfo in all_roles_infos %}
+          <li class='role-item' data-role-url="{% url 'edit_role' role_id=rinfo.role.id %}">
+            <div class="w-100">
+              <div class="d-flex">
+                <div class="wrapper">
+                  <h6 class="mb-1">{{ rinfo.role.name }}</h6>
+                  <p class="font-italic mb-0">
+                    <span class="text-gray">Assigned To</span>
+                    <span class="font-weight-bold">{{ rinfo.assigned_user_count }} User(s)</span>
+                    <span class="text-gray ml-1">(0 active user)</span>
+                  </p>
+                </div>
+                <div class="action-wrapper wrapper ml-auto d-flex align-items-center" style="height: 100%;" onclick="event.stopPropagation()">
+                  <form action="{% url 'create_role' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name='source_role_id' value="{{rinfo.role.id}}">
+                    <button 
+                      type='submit' 
+                      class="btn btn-icons btn-rounded icon-hover" 
+                      title="Duplicate"
+                    >
+                      <i class="mdi mdi-content-copy icon-md mr-3"></i>
+                    </button>
+                  </form>
+                  <form action="{% url 'delete_role' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name='role_id' value="{{rinfo.role.id}}">
+                    <button 
+                      type='submit' 
+                      class="btn btn-icons btn-rounded icon-hover"
+                      title="Delete"
+                      {% if not rinfo.can_delete %}disabled{% endif %}
+                    > 
+                      <i 
+                        class="mdi mdi-trash-can-outline text-{% if rinfo.can_delete %}danger{% else %}muted{% endif %} icon-md mr-3">
+                      </i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>  
+{% endblock content %}
+
+{% block ExtraJs %}
+<script>
+  $(function() {
+    $('.role-item').on('click', function() {
+      const roleEditURL = $(this).attr('data-role-url');
+      window.location.href = roleEditURL;
+    });
+  });
+</script>
+{% endblock %}

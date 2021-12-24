@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 from django.contrib import messages
+from django.db.migrations.state import ModelState
+from typing import Generic
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'saas_web_app',
     'auth_email_verify',
     'customers.apps.CustomersConfig',
 ]
@@ -142,3 +146,22 @@ MESSAGE_TAGS = {
     messages.WARNING: 'warning',
     messages.ERROR: 'danger',
 }
+
+
+AUTH_USER_MODEL = 'auth_email_verify.User'
+LOGIN_URL = 'signin'
+
+# ---------------------------------------------------------------------------- #
+
+# Django doesn't like when its models inherit from anything other than models.Model
+# However making models inherit from typings.Generic is necessary to provide accurate code
+# completions from python language server. This file removes typing.Generic from list of class bases
+# of the model classes so that Django doesn't explode 
+
+_original = ModelState.render
+
+def _new(self, apps):
+    self.bases = tuple(base for base in self.bases if not issubclass(base, Generic))  # type: ignore
+    return _original(self, apps)
+
+ModelState.render = _new  # type: ignore

@@ -1,12 +1,7 @@
-from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
-from django.http.response import HttpResponse, HttpResponseRedirect
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.template import  Template
-from django.utils.html import format_html
-from django.template.loader import render_to_string
 
 from .models import Client, Company, Customer, ServiceItem, Supplier#, User
 
