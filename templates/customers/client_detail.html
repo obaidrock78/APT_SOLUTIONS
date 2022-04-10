@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block ExtraCss %}
+<style>
+
+    #create-contact-model .profile-cont{
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-direction: column;
+    }
+    #create-contact-model .profile-cont img{
+        border-radius: 50%;
+    }
+    #create-contact-model .profile-cont .customer-type-cont{
+        display: flex;
+        flex-direction: row;
+    }
+    #create-contact-model .profile-cont .input-cont{
+        margin: 5px;
+        padding: 3px 8px;
+        border-radius: 35px;
+        background-color: #fff;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    #create-contact-model .profile-cont .input-cont input{
+        margin-left: 5px !important;
+    }
+    #create-contact-model .profile-cont .input-cont .label{
+        margin: 0 !important;
+        font-size: small;
+    }
+    .modal-header{
+        border-bottom: 1px solid rgba(0,0,0,.1);
+        padding: 10px !important;
+        align-items: center !important;
+    }
+</style>
+{% endblock ExtraCss %}
+
+{% block content %}
+    <div class="row bg-white py-4 rounded mb-5">
+        <div class="col">
+            <h1>{{client.get_name}}</h1>
+            <small class="text-primary">{{client.get_customer_type_display}}</small>
+        </div>
+    </div>
+
+    <div class="modal fade" id="create-contact-model" tabindex="-1" aria-labelledby="create-contact-model-label" aria-hidden="true">
+        <div class="modal-dialog" >
+          <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add a contact</h5>
+                <button type="button" class="close m-0" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <form action="{% url 'customers:contact_create' %}" method="POST" id="new-contact-form">
+                {% csrf_token %}
+                <input type="hidden" name="client_id" value="{{client.id}}">
+                {{create_contact_form|crispy}}
+                <input type="submit" class="btn btn-success btn-sm">
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6">
+                            <h5>Contacts</h5>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#create-contact-model">Add</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% for contact in client.get_contacts %}
+                        <div class="row">
+                            <span class="col-12"><strong>{{contact.name}}</strong></span>
+                            <span class="col-12 text-muted"><small>{{contact.email}}</small></span>
+                            <span class="col-12 text-muted"><small>{{contact.phone}}</small></span>
+                        </div>
+                        <hr>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6">
+                            <h5>About</h5>
+                        </div>
+                        <div class="col-6 text-right">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <span class="col-12"><strong>Client Since</strong></span>
+                        <span class="col-12 text-muted"><small>{{client.client_date.date}}</small></span>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <span class="col-12"><strong>Date Created</strong></span>
+                        <span class="col-12 text-muted"><small>{{client.date_created.date}}</small></span>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <h5>Tags</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-8 m-lg-0 mt-5">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6">
+                            <h4 class="card-title">Notes</h4>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#create-note-model">Add</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            {% for note in client.get_notes %}
+                                <div class="row">
+                                    <span class="col-12"><strong>{{note.title}}</strong></span>
+                                    <span class="col-12 text-muted"><small>{{note.text}}</small></span>
+                                </div>
+                                <hr>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="create-note-model" tabindex="-1" aria-labelledby="create-note-model-label" aria-hidden="true">
+        <div class="modal-dialog" >
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add a contact</h5>
+                <button type="button" class="close m-0" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'customers:note_create' %}" method="POST" id="new-contact-form">
+                {% csrf_token %}
+                <input type="hidden" name="client_id" value="{{client.id}}">
+                {{create_note_form|crispy}}
+                <input type="submit" class="btn btn-success btn-sm">
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block ExtraJs %}
+{% comment %} <script>
+    // data-dismiss="modal" aria-label="Close"
+    const buttons = document.querySelectorAll('[data-bs-toggle="modal"]');
+    buttons.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            const targetId = btn.getAttribute('data-target')
+            let target = document.querySelector(`${targetId}`)
+            target.classList.toggle('hidden', false)
+        })
+    })
+</script> {% endcomment %}
+
+<script src="{% static 'app/customers.js' %}"></script>
+<script>
+  function submitForm(formId) {
+    var form = document.getElementById(formId);
+    if (form.checkValidity())
+      form.submit();
+    else
+      form.reportValidity();
+  }
+</script>
+
+<script>
+
+    // var datalists = document.querySelectorAll("datalist");
+    // datalists.forEach(list=>{
+    //     const listId = list.getAttribute('id')
+    //     const input = document.querySelector(`input[list='${listId}']`)
+    //     input.addEventListener('change', ()=>{
+    //         const value = input.value
+    //         const storageInputName = input.getAttribute('data-store-in')
+    //         var entityValue = document.querySelector(`#${listId} option[value='${value}']`).getAttribute("data-value");
+    //         document.querySelector(`input[name='${storageInputName}']`).value = entityValue
+    //     })
+    // })
+
+    // Delete
+    // function customeTypeHandler(elem){
+    //     var individualForm = document.getElementById("individual-form");
+    //     var clientForm = document.getElementById("client-form");
+    //     if (elem.value == "individual" && elem.value == "client"){
+    //         individualForm.classList.toggle('hidden', false)
+    //     } else {
+    //         clientForm.classList.toggle('hidden', true)
+    //     }
+    // }
+    // Delete
+
+   //  function customerTypeHandler(elem){
+   //
+   //   var individualForm = document.getElementById("individual-form");
+  //   var clientForm = document.getElementById("client-form");
+    //    if (elem.value == "client"){
+    //        clientForm.classList.toggle('hidden', false)
+   //     } else {
+    //        clientForm.classList.toggle('hidden', true)
+   //     }
+    //    if (elem.value == "individual" && "client"){
+   //         individualForm.classList.toggle('hidden', false)
+   //     }
+   //     else {
+   //         individualForm.classList.toggle('hidden', true)
+     //   }
+  //  }
+    // function customerTypeHandler(elem){
+    //     var clientForm = document.getElementById("client-form");
+    //     if (elem.value == "client"){
+    //         clientForm.classList.toggle('hidden', false)
+    //     } else {
+    //         clientForm.classList.toggle('hidden', true)
+    //     }
+    // }
+
+    // function submitForm(formId){
+    //     var form = document.getElementById(formId);
+    //     form.submit()
+    // }
+</script>
+{% endblock ExtraJs %}

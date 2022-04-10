@@ -40,10 +40,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # third parties
+    'crispy_forms',
+
     'saas_web_app',
     'auth_email_verify',
     'customers.apps.CustomersConfig',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -81,8 +86,12 @@ WSGI_APPLICATION = 'saas_web_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'jay',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'PORT': '3306',
     }
 }
 
@@ -130,13 +139,23 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static-comp')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# For Email
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587  # Integer. Not A String.
+# Gmail Email Config
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'smtp.gmail.com'
+#EMAIL_PORT = 587  # Integer. Not A String.
+#EMAIL_USE_TLS = True
+#EMAIL_HOST_USER = 'practiceinfinitysa@gmail.com'
+#EMAIL_HOST_PASSWORD = 'JordynJane1628%$Burt'
+
+# Email config
+EMAIL_HOST = 'mail.nudgeme.co.za'
+EMAIL_HOST_USER = 'noreply@nudgeme.co.za'
+EMAIL_HOST_PASSWORD = 'JordynJane1628$$'
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'practiceinfinitysa@gmail.com'
-EMAIL_HOST_PASSWORD = 'JordynJane1628%$Burt'
+DEFAULT_FROM_EMAIL = 'Nudge <noreply@nudgeme.co.za>'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 
 
 MESSAGE_TAGS = {
@@ -156,7 +175,7 @@ LOGIN_URL = 'signin'
 # Django doesn't like when its models inherit from anything other than models.Model
 # However making models inherit from typings.Generic is necessary to provide accurate code
 # completions from python language server. This file removes typing.Generic from list of class bases
-# of the model classes so that Django doesn't explode 
+# of the model classes so that Django doesn't explode
 
 _original = ModelState.render
 

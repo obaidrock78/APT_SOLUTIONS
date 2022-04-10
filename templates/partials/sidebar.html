@@ -11,11 +11,11 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
         <li class="nav-item active"><a class="nav-link" href="{% url 'customers:home' %}"> <img class="menu-icon"
-                    src="{% static 'images/menu_icons/01.png' %}" alt="menu icon"> <span
+                    src="{% static 'images/menu_icons/09.png' %}" alt="menu icon"> <span
                     class="menu-title">Dashboard</span></a></li>
         <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#page-layouts" aria-expanded="false"
-                aria-controls="page-layouts"> <img class="menu-icon" src="{% static 'images/menu_icons/02.png' %}"
+                aria-controls="page-layouts"> <img class="menu-icon" src="{% static 'images/menu_icons/22.png' %}"
                     alt="menu icon"> <span class="menu-title">Clients</span><i class="menu-arrow"></i></a>
             <div class="collapse" id="page-layouts">
                 <ul class="nav flex-column sub-menu">
@@ -49,11 +49,18 @@
                 </ul>
             </div>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'customers:team_members' %}">
+                <img class="menu-icon" src="{% static 'images/menu_icons/21.png' %}" alt="menu icon">
+                <span class="menu-title">Team Members</span><i class="menu-arrow"></i>
+            </a>
+        </li>
     </ul>
 
     <ul class="nav nav-bottom p-0">
         <li class="nav-item active">
-            <a class="nav-link" href="{% url 'customers:settings' %}"> 
+            <a class="nav-link" href="{% url 'customers:settings' %}">
                 <img class="menu-icon" src="{% static 'images/menu_icons/05.png' %}" alt="menu icon">
                 <span class="menu-title">Settings</span>
             </a>

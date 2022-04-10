@@ -1,5 +1,12 @@
 import json
 import uuid
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+
+from customers.models import Company
+from customers.utilities import get_company
+from .tokens import account_activation_token
 
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -13,13 +20,13 @@ from django.urls import reverse
 
 from .actions import user_allow_admin, send_email_after_registration
 from .forms import SignUpForm, SignInForm
-from .models import AuthRole, Profile, User, RolePermission
+from .models import AuthRole, Profile, TeamMember, User, RolePermission
 
 from .app_permissions import categorized_permissions, find_permission_obj, find_permission_objs_many
 
 # Account Verification
 def account_verify(request, token):
-    # print(token)
+    print(token)
     pf = Profile.objects.filter(token=token).first()
     # print(pf)
     pf.verify = True
@@ -37,12 +44,18 @@ class SignUpView(View):
         form = SignUpForm(request.POST)
         # print(form)
         if form.is_valid():
-            new_user = form.save()
+            new_user = form.save(commit=False)
+            company_name = form.cleaned_data.get('company_name', None)
+            company, created = Company.objects.get_or_create(name = company_name)
+            if not created:
+                return HttpResponse("Company with this name already exist.")
+            new_user.company = company
+            new_user.save()
             # print(new_user)
             uid = uuid.uuid4()
             # print(uid)
 
-            new_user.refresh_from_db()
+            # new_user.refresh_from_db()
 
             # new_user.profile.token = uid
             # new_user.profile.save()
@@ -71,20 +84,19 @@ class SignInView(View):
 
     def post(self, request):
         form = SignInForm(request, data=request.POST)
-
-        # print(form)
-        if form.is_valid():
+        username = request.POST['username']
+        password = request.POST['password']
+        if username and password and form.is_valid():
             # print(form)
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
+            # username = form.cleaned_data['username']
+            # password = form.cleaned_data['password']
             # print(username, password)
 
             # user = User.objects.get(username=username)
             # print(user)
-            user = authenticate(username=username,  password=password)
-
-            pro = Profile.objects.get(user=user)
-
+            user = authenticate(request=request, username=username,  password=password)
+            print(user)
+            pro, created = Profile.objects.get_or_create(user=user)
             if pro.verify:
                 # print("Ok")
                 login(request, user)
@@ -104,7 +116,7 @@ def logout_view(request):
 
 def role_unlocked(role: AuthRole):
     return not (
-        role.label in ('admin_regular', 'admin_no_bill') 
+        role.label in ('admin_regular', 'admin_no_bill')
     )
 
 
@@ -178,7 +190,7 @@ def apply_role_changes(request):
     try:
         if role_name == '':
             raise Exception
-    
+
         if role_delta_json is None:
             raise Exception
         deltas = json.loads(role_delta_json)
@@ -205,7 +217,7 @@ def apply_role_changes(request):
     messages.success(request, "Changes applied successfully.")
     if len(deltas) == 0:
         messages.warning(request, "No changes made to permissions.")
-        
+
     return redirect(reverse('manage_roles'))
 
 
@@ -233,13 +245,13 @@ def create_role(request):
         # Copy over the permissions
         app_permissions = map(find_permission_obj, role.flat_permissions_list())
         db_permissions = [
-            new_role.wrap_permission_object(p) 
+            new_role.wrap_permission_object(p)
             for p in app_permissions
             if p is not None
         ]
         RolePermission.objects.bulk_create(db_permissions)
 
-    return redirect(reverse('edit_role', args=[new_role.id]))    
+    return redirect(reverse('edit_role', args=[new_role.id]))
 
 
 @require_http_methods(['POST'])
@@ -263,7 +275,45 @@ def delete_role(request):
 @login_required
 def user_permissions(request):
     current_user: User = request.user
-    perm_objs = find_permission_objs_many(*current_user.role.flat_permissions_list())
+    if current_user.role:
+        perm_objs = find_permission_objs_many(*current_user.role.flat_permissions_list())
+    else:
+        perm_objs = find_permission_objs_many()
     return render(request, 'auth_email_verify/user_permissions.html', context={
-        'perm_objs': perm_objs    
+        'perm_objs': perm_objs
     })
+
+
+
+def invite_accept(request, email, company, token):
+    if request.method == "GET":
+        try:
+            email = force_str(urlsafe_base64_decode(email))
+            company = force_str(urlsafe_base64_decode(company))
+        except(TypeError, ValueError, OverflowError):
+            email = None
+            company = None
+        company = get_object_or_404(Company, id = company)
+
+        if company is not None and email is not None and account_activation_token.check_token(None, token, email):
+            temp_user = User(email = email)
+            temp_user.company = company
+            invite_accept_form = SignUpForm(instance = temp_user)
+            context = {'invite_accept_form': invite_accept_form, 'token_value': token, 'company_id': company.id}
+            return render(request, 'auth_email_verify/invite_accept_form.html', context)
+    if request.method == "POST":
+        token = request.POST.get('token', None)
+        company_id = request.POST.get('company_id', None)
+        form = SignUpForm(request.POST)
+        company = get_object_or_404(Company, id = company_id)
+
+        if form.is_valid():
+            user = form.save()
+            team_member = TeamMember(user = user)
+            team_member.company = company
+            team_member.token = token
+            team_member.verify = True
+            team_member.save()
+            return redirect('customers:team_members')
+        context = {'invite_accept_form': form, 'token_value': token}
+        return render(request, 'auth_email_verify/invite_accept_form.html', context)

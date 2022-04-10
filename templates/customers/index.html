@@ -94,7 +94,7 @@
                   <div class="mb-3" id="company-name-field"><input type="text" class="form-control" name="company_name" placeholder="Enter Company Name"></div>
                   <div class="mb-3" id="trading-name-field"><input type="text" class="form-control" name="trading_name" placeholder="Enter Trading Name"></div>
                 </div>
-                <div class="mb-3" id="contact-name-field"> <input type="text" class="form-control" placeholder="Enter Contact Name"></div>
+                <div class="mb-3" id="contact-name-field"> <input type="text" class="form-control" placeholder="Enter Contact Name" name="contact_name"></div>
 
                 <div class="row mb-3">
                     <div class="col-6">
@@ -140,7 +140,7 @@
                     </div>
 
                     <div class="mb-3">
-                      <select class="form-control" name="efiling_profile" required> 
+                      <select class="form-control" name="efiling_profile" required>
                         <option value="" selected>Select Efiling Profile</option>
                         <option value="firm">Firm</option>
                         <option value="own">Own</option>
@@ -173,7 +173,7 @@
                     </div>
                     <div class="row mb-3">
                       <div class="col-6">
-                        <select class="form-control" name="efiling_profile" required> 
+                        <select class="form-control" name="efiling_profile" required>
                           <option value="" selected>Select Efiling Profile</option>
                           <option value="firm">Firm</option>
                           <option value="own">Own</option>
@@ -269,15 +269,15 @@
                                     </thead>
                                     <tbody>
                                     {% for customer in customers %}
-                                        <tr role="row" class="odd">
-                                            <td class="">{{ customer.account_type }}</td>
-                                            <td class="">{{ customer.get_customer_type_display }}</td>
-                                            <td class="">{{ customer.trading_name }}</td>
-                                            <td class="sorting_1">{{ customer.work_email }}</td>
-                                            <td>{{ customer.mobile_number }}</td>
-                                            <td>{{ customer.address }}</td>
-                                            <td>{{ customer.income_tax }}</td>
-                                        </tr>
+                                      <tr role="row" class="odd">
+                                        <td class=""><a href="{% url 'customers:client_detail' id=customer.id %}">{{ customer.account_type }}</a></td>
+                                        <td class="">{{ customer.get_customer_type_display }}</td>
+                                        <td class="">{{ customer.get_name }}</td>
+                                        <td class="sorting_1">{{ customer.work_email }}</td>
+                                        <td>{{ customer.mobile_number }}</td>
+                                        <td>{{ customer.address }}</td>
+                                        <td>{{ customer.income_tax }}</td>
+                                      </tr>
                                     {% endfor %}
                                     </tbody>
                                 </table>

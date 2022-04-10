@@ -23,6 +23,7 @@ class CustomUserAdmin(UserAdmin):
             {
                 'fields': (
                     'role',
+                    'company',
                 ),
             },
         ),

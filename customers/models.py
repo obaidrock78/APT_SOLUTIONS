@@ -6,7 +6,7 @@ class Company(models.Model):
 
     def __str__(self):
         return self.name
-        
+
 
 class Customer(models.Model):
 
@@ -15,7 +15,7 @@ class Customer(models.Model):
         ('2', "Two"),
     )
 
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="customers", null=True)
     customer_name = models.CharField(max_length=200)
     is_active = models.BooleanField(default=False, null=True, blank=True)
     category = models.CharField(max_length=200, choices=CATEGORY_CHOICES, default='2', null=True, blank=True)
@@ -63,7 +63,7 @@ class Supplier(models.Model):
         ('2', "Two"),
     )
 
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="suppliers")
     supplier_name = models.CharField(max_length=200)
     is_active = models.BooleanField(default=False, null=True, blank=True)
     category = models.CharField(max_length=200, choices=CATEGORY_CHOICES, default='1', null=True, blank=True)
@@ -128,6 +128,8 @@ class Client(models.Model):
         ("odd", "Odd"),
     )
 
+    name                = models.CharField(max_length=300, null=True)
+    company             = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="clients")
     account_type        = models.CharField(max_length=300, choices=ACCOUNT_TYPES, null=True)
     customer_type       = models.CharField(max_length=300, choices=CUSTOMER_TYPES, null=True)
     entity              = models.CharField(max_length=300, choices=ENTITY_CHOICES, null=True)
@@ -159,7 +161,9 @@ class Client(models.Model):
     address_zip         = models.CharField(max_length=300, null=True)
     address_country     = models.CharField(max_length=300, null=True)
 
-    client_date         = models.CharField(max_length=300, null=True)
+    # client_date         = models.CharField(max_length=300, null=True)
+    client_date         = models.DateTimeField(auto_now_add=False, null=True)
+    date_created        = models.DateTimeField(auto_now_add=True)
     employer            = models.CharField(max_length=300, null=True)
     date_birth          = models.CharField(max_length=300, null=True)
     marital_status      = models.CharField(max_length=300, null=True)
@@ -167,9 +171,29 @@ class Client(models.Model):
     occupation          = models.CharField(max_length=300, null=True)
 
     def __str__(self):
-        return f"{self.trading_name} ({self.customer_type}) ---- ({self.account_type})"
-    
-    
+        return f"{self.trading_name} ({self.customer_type}) >>> ({self.company})"
+
+    def get_contacts(self):
+        try:
+            return self.contacts.all()
+        except:
+            return None
+
+    def get_notes(self):
+        try:
+            return self.notes.all()
+        except:
+            return None
+
+    def get_name(self):
+        if self.name:
+            return self.name
+        elif self.trading_name:
+            return self.trading_name
+        elif self.company_name:
+            return self.company_name
+        return ''
+
 class ServiceItem(models.Model):
     BILLING_TYPES = (
         ('a', 'On Acceptance'),
@@ -177,6 +201,7 @@ class ServiceItem(models.Model):
         ('r', 'Recurring'),
     )
 
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="service_items")
     name = models.CharField(max_length=250)
     description = models.TextField()
     rate = models.PositiveIntegerField(default=0)
@@ -187,3 +212,20 @@ class ServiceItem(models.Model):
 
     def __str__(self):
         return f"{self.name}-(${self.rate})"
+
+
+class Contact(models.Model):
+    parent = models.ForeignKey("customers.Client", on_delete=models.CASCADE, related_name="contacts")
+
+    name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255)
+    phone = models.CharField(max_length=255)
+    mobile = models.CharField(max_length=255)
+    address = models.CharField(max_length=300)
+    additional_note = models.TextField(blank=True, null=True)
+
+class Note(models.Model):
+    parent = models.ForeignKey("customers.Client", on_delete=models.CASCADE, related_name="notes")
+
+    title = models.CharField(max_length=255)
+    text = models.TextField()

@@ -14,4 +14,5 @@ urlpatterns = [
     path('roles/delete-role', views.delete_role, name='delete_role'),
     path('roles/create-role', views.create_role, name='create_role'),
     path('user/list-permissions', views.user_permissions, name='user_permissions'),
+    path('invite-accept/<slug:email>/<slug:company>/<slug:token>/', views.invite_accept, name='invite_accept'),
 ]

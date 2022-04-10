@@ -43,7 +43,7 @@ class SignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('full_name', 'username', 'email', 'company_name', 'mobile_number' )
+        fields = ('full_name', 'username', 'email', 'mobile_number', 'company_name' )
         # field_classes = {'username': UsernameField}
 
 

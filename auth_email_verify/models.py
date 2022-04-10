@@ -86,8 +86,60 @@ class User(AbstractUser):
         null=True,
         blank=True
     )
+    company = models.OneToOneField('customers.Company', on_delete=models.CASCADE, related_name="owner", null=True)
 
+    @property
+    def get_clients(self):
+        try:
+            return self.company.clients.all()
+        except:
+            return None
+
+    @property
+    def get_customers(self):
+        try:
+            return self.company.customers.all()
+        except:
+            return None
+
+    @property
+    def get_service_items(self):
+        try:
+            return self.company.service_items.all()
+        except:
+            return None
+
+    @property
+    def get_team_members(self):
+        try:
+            return self.company.team_members.all()
+        except:
+            return None
+
+    @property
+    def get_suppliers(self):
+        try:
+            return self.company.suppliers.all()
+        except:
+            return None
+    
 class Profile(BaseModel['Profile']):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=150)
     verify = models.BooleanField(default=False)
+
+class TeamMember(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    company = models.ForeignKey("customers.Company", on_delete=models.CASCADE, related_name="team_members")
+    token = models.CharField(max_length=150)
+    verify = models.BooleanField(default=False)
+
+
+
+
+@receiver(post_save, sender=User)
+def create_profile(sender, created, instance, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+    else:
+        instance.profile.save()

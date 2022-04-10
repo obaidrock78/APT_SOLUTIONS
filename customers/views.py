@@ -1,15 +1,24 @@
+from django.conf import Settings
 from django.contrib.auth.decorators import login_required
-from django.http.response import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.core.mail import send_mail
+from django.http.response import Http404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string, get_template
+from auth_email_verify.models import TeamMember
 
+from auth_email_verify.tokens import account_activation_token
+from django.conf import settings as _settings
 from .models import Client, Company, Customer, ServiceItem, Supplier
 
 # Create your views here.
 
 
 # For Index page with View
-from customers.forms import CustomerForm, ServiceItemForm, SupplierForm
+from customers.forms import CreateContactForm, CreateNoteForm, CustomerForm, ServiceItemForm, SupplierForm
 from .utilities import get_company
 
 
@@ -17,45 +26,116 @@ from .utilities import get_company
 def home(request):
     company = get_company(request)
     # if company is None:
-    if company is not None:
+    print(company)
+    if company is None:
         return redirect('signin')
     return render(request, "home/index.html")
 
 # @login_required
 @login_required(login_url='signin')
 def customers_list(request):
-    company = get_company(request)
-    if company is None:
-        return redirect("signin")
-    customers = Customer.objects.filter(company=company)
+    # company = get_company(request)
+    # if company is None:
+    #     return redirect("signin")
+    # customers = Customer.objects.filter(company=company)
+    customers = request.user.get_customers
     return render(request, 'customers/index.html', {'customers': customers})
 
 @login_required(login_url='signin')
 def client_list(request):
-    clients = None
+    clients = request.user.get_clients
+    clients = clients.order_by("-id")
     type = request.GET.get('type', None)
     if type:
-        clients = Client.objects.filter(customer_type=type)
-    else:
-        clients = Client.objects.all()
+        clients = clients.filter(customer_type=type)
     return render(request, 'customers/index.html', {'customers': clients})
+
+@login_required(login_url='signin')
+def client_detail(request, id):
+    client = get_object_or_404(Client, id = id)
+    if client not in request.user.get_clients:
+        raise Http404()
+
+    create_contact_form = CreateContactForm()
+    create_note_form = CreateNoteForm()
+    context = {
+        'client': client,
+        'create_contact_form': create_contact_form,
+        'create_note_form': create_note_form,
+        }
+    return render(request, 'customers/client_detail.html', context)
+
+
+@login_required(login_url='signin')
+def contact_create(request):
+    if request.method == "POST":
+        client_id = request.POST.get('client_id', None)
+        create_contact_form = CreateContactForm(request.POST)
+        client = get_object_or_404(Client, id = client_id)
+        if create_contact_form.is_valid():
+            contact = create_contact_form.save(commit=False)
+            contact.parent = client
+            contact.save()
+        return HttpResponseRedirect(reverse("customers:client_detail", kwargs={'id': client.id}))
+
+@login_required(login_url='signin')
+def note_create(request):
+    if request.method == "POST":
+        client_id = request.POST.get('client_id', None)
+        create_note_form = CreateNoteForm(request.POST)
+        client = get_object_or_404(Client, id = client_id)
+        if create_note_form.is_valid():
+            note = create_note_form.save(commit=False)
+            note.parent = client
+            note.save()
+        return HttpResponseRedirect(reverse("customers:client_detail", kwargs={'id': client.id}))
 
 @login_required(login_url='signin')
 def services(request):
     if request.method == "GET":
-        services = ServiceItem.objects.all()
+        # services = ServiceItem.objects.all()
+        services = request.user.get_service_items
         form = ServiceItemForm()
         context = {'services': services, 'form': form}
         return render(request, 'customers/services.html', context)
     elif request.method == "POST":
         form = ServiceItemForm(request.POST)
+        services = request.user.get_service_items
         if form.is_valid():
-            form.save()
-            return redirect("customers:services")
+            service_item = form.save(commit=False)
+            service_item.company = get_company(request)
+            service_item.save()
+        context = {'services': services, 'form': form}
+        return render(request, 'customers/services.html', context)
 
 @login_required(login_url='signin')
 def settings(request):
     return render(request, 'customers/settings.html')
+
+
+@login_required(login_url='signin')
+def team_members(request):
+    if request.method == "GET":
+        # team_members = TeamMember.objects.all()
+        team_members = request.user.get_team_members
+        context = {'team_members': team_members}
+        return render(request, 'customers/team_members.html', context)
+    if request.method == "POST":
+        invite_email = request.POST.get('invite_email', None)
+        if invite_email:
+            current_site = get_current_site(request)
+            company = get_company(request)
+            mail_subject = 'Activate your account.'
+            message = render_to_string('customers/invite_template.html', {
+                        'domain': current_site.domain,
+                        'uid': urlsafe_base64_encode(force_bytes(invite_email)),
+                        'company': urlsafe_base64_encode(force_bytes(company.id)),
+                        'token': account_activation_token.make_token(None, invite_email),
+                    })
+            to_email = invite_email
+            from_email = _settings.EMAIL_HOST_USER
+            send_mail(mail_subject, message, from_email, [to_email])
+        return redirect("customers:team_members")
 
 
 # @login_required
@@ -69,7 +149,8 @@ def settings(request):
 #     return render(request, 'suppliers/index.html', {'suppliers': suppliers})
 @login_required(login_url='signin')
 def suppliers_list(request):
-    suppliers = Supplier.objects.all()
+    suppliers = request.user.get_suppliers
+    # suppliers = Supplier.objects.all()
     return render(request, 'suppliers/index.html', {'suppliers': suppliers})
 
 
@@ -80,10 +161,13 @@ def customers_create(request):
     if company is None:
         return redirect("signin")
     if request.method == "POST":
+        print(request.POST)
         form = CustomerForm(request.POST)
         if form.is_valid():
             try:
-                form.save()
+                customer = form.save(commit=False)
+                customer.company = company
+                customer.save()
                 return redirect('/customers')
             except:
                 pass
@@ -95,8 +179,9 @@ def customers_create(request):
 # @login_required
 @login_required(login_url='signin')
 def suppliers_create(request):
-    company = get_company(request)
-    company = Company.objects.order_by("id").last()
+    # company = get_company(request)
+    company = request.user.company
+    # company = Company.objects.all().last()
     # if company is None:
     #     return redirect("signin")
     if request.method == "POST":
@@ -105,7 +190,9 @@ def suppliers_create(request):
         # print(form.errors)
         if form.is_valid():
             try:
-                form.save()
+                supplier = form.save(commit=False)
+                supplier.company = company
+                supplier.save()
                 return redirect('/suppliers')
             except:
                 pass
@@ -120,6 +207,7 @@ def suppliers_create(request):
 def client_create(request):
     if request.method == "POST":
         # print(request.POST)
+        contact_name = request.POST.get('contact_name', None)
         account_type = request.POST.get('account_type', None)
         customer_type = request.POST.get('customer_type', None)
         entity = request.POST.get('entity', None)
@@ -159,9 +247,14 @@ def client_create(request):
         occupation = request.POST.get('occupation', None)
 
 
+        if not client_date:
+            client_date = None
+
         client = Client.objects.create(
+            name = contact_name,
             account_type = account_type,
             customer_type = customer_type,
+            company = get_company(request),
             entity = entity,
             company_name = company_name,
             trading_name = trading_name,

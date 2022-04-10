@@ -1,0 +1,5 @@
+{% autoescape off %}
+Hi,
+Please click on the link to accept your invitation,
+http://{{ domain }}{% url 'invite_accept' email=uid token=token company=company %}
+{% endautoescape %}

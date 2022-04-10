@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block ExtraCss %}
+<style>
+
+    #inivite-member-model .profile-cont{
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-direction: column;
+    }
+    #inivite-member-model .profile-cont img{
+        border-radius: 50%;
+    }
+    #inivite-member-model .profile-cont .customer-type-cont{
+        display: flex;
+        flex-direction: row;
+    }
+    #inivite-member-model .profile-cont .input-cont{
+        margin: 5px;
+        padding: 3px 8px;
+        border-radius: 35px;
+        background-color: #fff;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    #inivite-member-model .profile-cont .input-cont input{
+        margin-left: 5px !important;
+    }
+    #inivite-member-model .profile-cont .input-cont .label{
+        margin: 0 !important;
+        font-size: small;
+    }
+    .modal-header{
+        border-bottom: 1px solid rgba(0,0,0,.1);
+        padding: 10px !important;
+        align-items: center !important;
+    }
+</style>
+{% endblock ExtraCss %}
+
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <h2>Team Members</h2>
+        </div>
+        <div class="col text-right">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#inivite-member-model">
+                Invite
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="inivite-member-model" tabindex="-1" aria-labelledby="inivite-member-model-label" aria-hidden="true">
+        <div class="modal-dialog" style="max-width: 65%;">
+          <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Invite new team member</h5>
+                <button type="button" class="btn btn-secondary" onclick="submitForm('invite-member-form')">Send Invite</button>
+            </div>
+            <div class="modal-body">
+              <form action="{% url 'customers:team_members' %}" method="POST" id="invite-member-form" autocomplete="off">
+                {% csrf_token %}
+                <p>Inviting users may affect your billing rate. Learn more about <a href="#">our pricing.</a></p>
+                <div class="mb-3" id="email-field-cont"> <label for="email-field">Email: </label> <input type="email" name="invite_email" class="form-control" placeholder="Enter Email" id="email-field" required></div>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    <div id="order-listing_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="order-listing" class="table dataTable no-footer" role="grid"
+                                       aria-describedby="order-listing_info">
+                                    <thead>
+                                    <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Purchased On: activate to sort column ascending"
+                                            style="width: 140.988px;">Name
+                                        </th>
+                                        <th class="sorting_asc" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Customer: activate to sort column descending"
+                                            aria-sort="ascending" style="width: 102.387px;">Email
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Ship to: activate to sort column ascending"
+                                            style="width: 79.0125px;">Role
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="order-listing" rowspan="1"
+                                            colspan="1" aria-label="Base Price: activate to sort column ascending"
+                                            style="width: 110.562px;">Billing Rate
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for member in team_members %}
+                                      <tr role="row" class="odd">
+                                        <td class="">{{ member.user.username }}</td>
+                                        <td class="">{{ member.user.email }}</td>
+                                        <td class="">{{ member.user.role }}</td>
+                                        <td class="sorting_1">0/hr</td>
+                                      </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block ExtraJs %}
+
+<script src="{% static 'app/customers.js' %}"></script>
+<script>
+  function submitForm(formId) {
+    var form = document.getElementById(formId);
+    if (form.checkValidity())
+      form.submit();
+    else
+      form.reportValidity();
+  }
+</script>
+
+{% endblock ExtraJs %}
